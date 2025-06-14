@@ -11,7 +11,8 @@ class Gameplay:
         self.font = pygame.font.SysFont("Arial", 24)
 
         # Herní stav
-        self.player = Player(100, 100, 40, 40)
+        self.player = Player(100, 100, 40, 40, 4)
+        self.walls = self.create_walls()
 
         # Cesty k ikonám
         asset_path = os.path.join(os.path.dirname(__file__), "..", "assets")
@@ -48,26 +49,38 @@ class Gameplay:
                 elif self.quit_button.collidepoint(event.pos):
                     self.running = False
 
+<<<<<<< HEAD
         if not self.paused:
             keys = pygame.key.get_pressed()
             self.player.handle_movement(keys)
 
     def update(self):
         pass  # Herní logika
+=======
+        keys = pygame.key.get_pressed()
+        dx, dy = self.player.handle_input(keys)
+        self.player.move(dx, dy, self.walls)
+>>>>>>> 0d577131273af3e867082c30fb06c381408186ea
 
     def draw(self):
         self.screen.fill((34, 139, 34))  # pozadí
 
+<<<<<<< HEAD
         # Postava
         pygame.draw.rect(
             self.screen, (139, 69, 19),
             (self.player.position_x, self.player.position_y, self.player.width, self.player.height)
         )
+=======
+        # Zahradník (čtverec)
+        self.player.draw(self.screen)
+>>>>>>> 0d577131273af3e867082c30fb06c381408186ea
 
         # Info
         info = self.font.render(f"Level: {self.player.level}   EXP: {self.player.exp}/100", True, (255, 255, 255))
         self.screen.blit(info, (10, 10))
 
+<<<<<<< HEAD
         # Tlačítka (ikonky)
         self.screen.blit(self.pause_icon, self.pause_button)
         self.screen.blit(self.quit_icon, self.quit_button)
@@ -77,3 +90,17 @@ class Gameplay:
             paused_msg = self.font.render("PAUSED", True, (255, 255, 255))
             msg_rect = paused_msg.get_rect(center=(self.screen.get_width() // 2, 40))
             self.screen.blit(paused_msg, msg_rect)
+=======
+    def create_walls(self, wall_thickness=1):
+        screen_width = pygame.display.get_surface().get_width()
+        screen_height = pygame.display.get_surface().get_height()
+
+        walls = [
+            pygame.Rect(0, 0, screen_width, wall_thickness),                                    # horní stěna
+            pygame.Rect(0, screen_height - wall_thickness, screen_width, wall_thickness),       # dolní stěna
+            pygame.Rect(0, 0, wall_thickness, screen_height),                                   # levá stěna
+            pygame.Rect(screen_width - wall_thickness, 0, wall_thickness, screen_height),       # pravá stěna
+        ]
+
+        return walls
+>>>>>>> 0d577131273af3e867082c30fb06c381408186ea
