@@ -9,8 +9,10 @@ class Player:
         self.level = 1
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.interacting = False
 
     def handle_input(self, keys):
+        self.interacting = keys[pygame.K_SPACE]
         dx = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * self.speed
         dy = (keys[pygame.K_DOWN] - keys[pygame.K_UP]) * self.speed
         return dx, dy

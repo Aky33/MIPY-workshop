@@ -38,11 +38,39 @@ class Tilemap:
         real_pos = (pos[0] * self.tile_size, pos[1] * self.tile_size)
         plant.pos = real_pos
         return True
+    
+    def pixel_to_tile_pos(self, pos):
+        return (pos[0] // self.tile_size, pos[1] // self.tile_size)
+
+    def get_plant(self, pos):
+        tileId = f"{pos[0]};{pos[1]}"
+        tile = self.tilemap[tileId]
+        if tile["type"] != "farmland":
+            print("TileId is not farmland")
+            return False
+        
+        if self.farmland.get(tileId) == None:
+            return False
+        
+        return self.farmland[tileId]
+
+    def harvest_plant(self, pos):
+        tileId = f"{pos[0]};{pos[1]}"
+        tile = self.tilemap[tileId]
+        if tile["type"] != "farmland":
+            print("TileId is not farmland")
+            return False
+        plant = self.farmland[tileId]
+        plant.harvested = True
+        self.remove_plant(pos)
+        return plant
 
     def remove_plant(self, pos):
         tileId = f"{pos[0]};{pos[1]}"
-        if tileId not in self.farmland:
-            return
+        tile = self.tilemap[tileId]
+        if tile["type"] != "farmland":
+            print("TileId is not farmland")
+            return False
         
         del self.farmland[tileId]
 

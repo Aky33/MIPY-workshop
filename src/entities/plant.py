@@ -7,11 +7,16 @@ class Plant:
         self.growth_speed = growth_speed
         self.progress = 0
         self.pos = pos
+        self.harvested = False
 
     def update(self):
         self.progress += self.growth_speed
         
+    def ready_to_harvest(self):
+        return self.progress > self.growth_speed
+
     def render(self, surf):
+        if self.harvested: return
         stage = int((self.progress / self.growth_time) * len(self.images))
         stage = min(stage, len(self.images) - 1)
         surf.blit(self.images[stage], self.pos)
