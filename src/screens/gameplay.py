@@ -1,6 +1,8 @@
 import pygame
 import os
 from src.entities.player import Player
+from src.engine.asset_manager import AssetManager
+from src.engine.tilemap import Tilemap
 
 class Gameplay:
     def __init__(self, screen):
@@ -13,6 +15,10 @@ class Gameplay:
         # Rozměry obrazovky
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
+
+        # Tilemap
+        self.assets = AssetManager()
+        self.tilemap = Tilemap(self.assets)
 
         # Hráč
         self.player = Player(100, 100, 40, 40, 5, self.screen_width, self.screen_height)
@@ -61,7 +67,7 @@ class Gameplay:
         self.player.move(dx, dy, self.obstacles)
 
     def draw(self):
-        self.screen.fill((34, 139, 34))  # pozadí - zelená louka
+        self.tilemap.render(self.screen) # Tilemap - pozadí
         self.player.render(self.screen)
 
         # Info
