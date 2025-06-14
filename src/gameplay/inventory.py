@@ -3,7 +3,7 @@ class Item:
         self.id = id
         self.name = name
         self.icon_asset = icon_asset
-        self.amount = amount  # Fix: use the provided amount
+        self.amount = amount
 
     def __repr__(self):
         return f"Item(id={self.id}, name={self.name}, amount={self.amount})"
@@ -14,7 +14,7 @@ class Inventory:
 
     def addItem(self, item):
         if item.id in self.items:
-            self.items[item.id].amount += item.amount  # Add the amount, not just 1
+            self.items[item.id].amount += item.amount
         else:
             self.items[item.id] = Item(item.id, item.name, item.icon_asset, item.amount)
 
