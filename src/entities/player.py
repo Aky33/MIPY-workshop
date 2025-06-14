@@ -2,6 +2,7 @@ import pygame
 
 class Player:
     def __init__(self, position_x, position_y, width, height, speed, screen_width, screen_height):
+        self.image = pygame.image.load("src/assets/sprites/player/farmer_idle.png").convert_alpha()
         self.rect = pygame.Rect(position_x, position_y, width, height)
         self.speed = speed
         self.exp = 0
@@ -41,5 +42,5 @@ class Player:
             self.exp = 0
             self.level += 1
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, (139, 69, 19), self.rect)
+    def render(self, surface):
+        surface.blit(self.image, self.rect.topleft)

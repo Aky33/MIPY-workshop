@@ -62,7 +62,7 @@ class Gameplay:
 
     def draw(self):
         self.screen.fill((34, 139, 34))  # pozadí - zelená louka
-        self.player.draw(self.screen)
+        self.player.render(self.screen)
 
         # Info
         info = self.font.render(
