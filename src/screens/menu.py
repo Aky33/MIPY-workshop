@@ -1,5 +1,8 @@
 import pygame
 
+from src.screens.gameplay import Gameplay
+
+
 class Menu:
     def __init__(self, screen):
         self.screen = screen
@@ -22,7 +25,9 @@ class Menu:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if self.start_button_rect.collidepoint(event.pos):
-                    self.running = False  # Ukonči menu -> začne hra
+                    self.running = False
+                    gameplay = Gameplay(self.screen)
+                    gameplay.run()
 
     def draw(self):
         self.screen.fill((30, 30, 30))  # tmavé pozadí
