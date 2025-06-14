@@ -42,6 +42,7 @@ class Gameplay:
         self.quit_button = self.quit_icon.get_rect(topright=(self.screen_width - 10, 50))
 
         self.test_plant = Plant("carrot", (6, 6), self.assets.get_plant_images("carrot"))
+        self.tilemap.add_plant(self.test_plant, (6, 6))
 
         self.obstacles = []
 
