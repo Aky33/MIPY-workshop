@@ -7,7 +7,8 @@ class AssetManager:
     asset_path_list = {
         # use names of assets as keys and their paths as values
         # example: "grass": "tiles/grass.png"
-        "wheat": "tiles/wheat.png"
+        "wheat": "tiles/wheat.png",
+        "carrot": "tiles/carrot.png"
     }
 
     grow_frame_count = 3

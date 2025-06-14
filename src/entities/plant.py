@@ -1,7 +1,7 @@
 class Plant:
     # images represent growth stages of plant going from 0 (just planted) to 2 (fully grown)
     # growth time is in frames (assuming 60 FPS)
-    def __init__(self, pos, images, growth_time = 600, growth_speed = 1):
+    def __init__(self, type, pos, images, growth_time = 600, growth_speed = 1):
         self.images = images
         self.growth_time = growth_time
         self.growth_speed = growth_speed

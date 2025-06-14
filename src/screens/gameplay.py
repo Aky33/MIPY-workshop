@@ -11,7 +11,7 @@ class Gameplay:
         self.clock = pygame.time.Clock()
         self.running = True
         self.paused = False
-        self.font = pygame.font.SysFont("Arial", 24)
+        self.font = pygame.font.Font("src/assets/fonts/StardewValley.ttf", 28)#pygame.font.SysFont("Arial", 24)
 
         # Rozměry obrazovky
         self.screen_width = screen.get_width()
@@ -41,7 +41,7 @@ class Gameplay:
         self.pause_button = self.pause_icon.get_rect(topright=(self.screen_width - 10, 10))
         self.quit_button = self.quit_icon.get_rect(topright=(self.screen_width - 10, 50))
 
-        self.test_plant = Plant((6, 6), self.assets.get_plant_images("wheat"))
+        self.test_plant = Plant("carrot", (6, 6), self.assets.get_plant_images("carrot"))
         print("plant:", self.tilemap.add_plant(self.test_plant, (6, 6)))
         print(self.test_plant.pos)
 
@@ -91,7 +91,7 @@ class Gameplay:
 
         # Info
         info = self.font.render(
-            f"Level: {self.player.level}   EXP: {self.player.exp}/100", True, (255, 255, 255)
+            f"Level: {self.player.level}   EXP: {self.player.exp}/100", True, (117, 55, 19)
         )
         self.screen.blit(info, (10, 10))
 
@@ -101,6 +101,6 @@ class Gameplay:
 
         # Pauzová zpráva
         if self.paused:
-            paused_msg = self.font.render("PAUZA", True, (255, 255, 255))
+            paused_msg = self.font.render("PAUZA", True, (117, 55, 19))
             msg_rect = paused_msg.get_rect(center=(self.screen_width // 2, 40))
             self.screen.blit(paused_msg, msg_rect)
