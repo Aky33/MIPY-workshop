@@ -29,7 +29,7 @@ class Game:
                 self.quit()
                 return
         
-        self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()))
+        self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
 
         pygame.display.update()
         self.clock.tick(self.STATIC_FPS)
