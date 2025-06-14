@@ -11,11 +11,7 @@ class Tilemap:
         self.farmland = {}
 
         self.generate_tilemap()
-        # gets filled with grass
-        #for x in range(20):
-        #    for y in range(20):
-        #        self.tilemap[str(x) + ";" + str(y)] = {"type": "grass", "pos": (x, y)}
-
+        
     def set_farmland_amt(self, amount):
         self.farmland_count = amount
         self.generate_tilemap()
