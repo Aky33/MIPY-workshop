@@ -4,10 +4,60 @@ class Tilemap:
         self.tile_size = tile_size
         self.tilemap = {}
         self.offgrid_tiles = []
+        self.farmland_count = 10
+        self.farmlandX = 5
+        self.farmlandY = 3
+        self.max_col = 5
+        self.farmland = {}
 
+        self.generate_tilemap()
         # gets filled with grass
+        #for x in range(20):
+        #    for y in range(20):
+        #        self.tilemap[str(x) + ";" + str(y)] = {"type": "grass", "pos": (x, y)}
+
+    def set_farmland_amt(self, amount):
+        self.farmland_count = amount
+        self.generate_tilemap()
+
+    def add_plant(self, plant, pos):
+        tileId = f"{pos[0]};{pos[1]}"
+        if self.tilemap.get(tileId) == None:
+            print("TileId not in tilemap", tileId)
+            return False
+        tile = self.tilemap[tileId]
+        if tile["type"] != "farmland":
+            print("TileId is not farmland")
+            return False
+        
+        if tileId in self.farmland:
+            print("TileId already has a plant")
+            return False
+        
+        self.farmland[tileId] = plant
+        real_pos = (pos[0] * self.tile_size, pos[1] * self.tile_size)
+        plant.pos = real_pos
+        return True
+
+    def remove_plant(self, pos):
+        tileId = f"{pos[0]};{pos[1]}"
+        if tileId not in self.farmland:
+            return
+        
+        del self.farmland[tileId]
+
+    def generate_tilemap(self):
+        
+        farmland_to_add = self.farmland_count
         for x in range(20):
+            col = 0
             for y in range(20):
+                can_place = farmland_to_add > 0 and col < self.max_col
+                if self.farmlandX < x and self.farmlandY < y and can_place:
+                    self.tilemap[str(x) + ";" + str(y)] = {"type": "farmland", "pos": (x, y)}
+                    farmland_to_add -= 1
+                    col += 1
+                    continue
                 self.tilemap[str(x) + ";" + str(y)] = {"type": "grass", "pos": (x, y)}
 
     def render(self, surf, offset=(0, 0)):

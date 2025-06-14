@@ -3,6 +3,7 @@ import os
 from src.entities.player import Player
 from src.engine.asset_manager import AssetManager
 from src.engine.tilemap import Tilemap
+from src.entities.plant import Plant
 
 class Gameplay:
     def __init__(self, screen):
@@ -40,6 +41,10 @@ class Gameplay:
         self.pause_button = self.pause_icon.get_rect(topright=(self.screen_width - 10, 10))
         self.quit_button = self.quit_icon.get_rect(topright=(self.screen_width - 10, 50))
 
+        self.test_plant = Plant((6, 6), self.assets.get_plant_images("wheat"))
+        print("plant:", self.tilemap.add_plant(self.test_plant, (6, 6)))
+        print(self.test_plant.pos)
+
         self.obstacles = []
 
     def run(self):
@@ -65,9 +70,11 @@ class Gameplay:
         keys = pygame.key.get_pressed()
         dx, dy = self.player.handle_input(keys)
         self.player.move(dx, dy, self.obstacles)
+        self.test_plant.update()
 
     def draw(self):
         self.tilemap.render(self.screen) # Tilemap - pozadí
+        self.test_plant.render(self.screen)
         self.player.render(self.screen)
 
         # Info

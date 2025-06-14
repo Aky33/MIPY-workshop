@@ -12,5 +12,6 @@ class Plant:
         self.progress += self.growth_speed
         
     def render(self, surf):
-        stage = (round(self.progress // self.growth_time) * 3) - 1
+        stage = int((self.progress / self.growth_time) * len(self.images))
+        stage = min(stage, len(self.images) - 1)
         surf.blit(self.images[stage], self.pos)
