@@ -9,7 +9,7 @@ class Gameplay:
         self.font = pygame.font.SysFont("Arial", 24)
 
         # Herní stav
-        self.player = Player(100, 100, 40, 40)
+        self.player = Player(100, 100, 40, 40, 4)
 
     def run(self):
         while self.running:
@@ -25,13 +25,14 @@ class Gameplay:
                 self.running = False
 
         keys = pygame.key.get_pressed()
-        self.player.handle_movement(keys)
+        dx, dy = self.player.handle_input(keys)
+        self.player.move(dx, dy, [])
 
     def draw(self):
         self.screen.fill((34, 139, 34))  # zelená zahrada
 
         # Zahradník (čtverec)
-        pygame.draw.rect(self.screen, (139, 69, 19), (self.player.position_x, self.player.position_y, self.player.width, self.player.height))
+        self.player.draw(self.screen)
 
         # Info panel
         info = self.font.render(f"Level: {self.player.level}   EXP: {self.player.exp}/100", True, (255, 255, 255))
