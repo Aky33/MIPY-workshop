@@ -8,5 +8,5 @@ screen = pygame.display.set_mode((640, 480))
 menu = Menu(screen)
 menu.run()
 
-game = Game()
-game.run()
+#game = Game()
+#game.run()
