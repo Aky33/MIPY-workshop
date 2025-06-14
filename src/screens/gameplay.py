@@ -11,7 +11,7 @@ class Gameplay:
         self.clock = pygame.time.Clock()
         self.running = True
         self.paused = False
-        self.font = pygame.font.Font("src/assets/fonts/StardewValley.ttf", 28)#pygame.font.SysFont("Arial", 24)
+        self.font = pygame.font.SysFont("Arial", 24)
 
         # Rozměry obrazovky
         self.screen_width = screen.get_width()

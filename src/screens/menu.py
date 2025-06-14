@@ -42,8 +42,8 @@ class Menu:
         self.screen = screen
         self.clock = pygame.time.Clock()
         self.running = True
-        self.font_title = pygame.font.Font("src/assets/fonts/Stardew-Valley-All-Caps.ttf", 100)#pygame.font.SysFont("Georgia", 60, bold=True)
-        self.font_button = pygame.font.Font("src/assets/fonts/StardewValley.ttf", 28)#pygame.font.SysFont("Arial", 32)
+        self.font_title = pygame.font.SysFont("Georgia", 60, bold=True)
+        self.font_button = pygame.font.SysFont("Arial", 32)
 
         self.start_button_rect = pygame.Rect(220, 250, 200, 60)
 
