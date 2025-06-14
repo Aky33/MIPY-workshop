@@ -5,30 +5,33 @@ from src.screens.gameplay import Gameplay
 
 
 class FlyingSprite:
-    def __init__(self, image, screen_width, screen_height, is_bee=False):
+    def __init__(self, image, screen_width, screen_height):
         self.image = image
         self.rect = self.image.get_rect()
-        max_x = max(1, screen_width - self.rect.width)
-        self.rect.x = random.randint(0, max_x)
-        self.rect.y = random.randint(-100, -10)
-        self.speed_y = random.uniform(0.5, 1.5)
-        self.speed_x = random.uniform(-0.5, 0.5) if is_bee else 0
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.is_bee = is_bee
+
+        # Včely létají zprava doleva
+        self.rect.x = random.randint(0, screen_width - self.rect.width)
+        self.rect.y = random.randint(0, screen_height - self.rect.height)
+        self.speed_x = random.uniform(-1.5, -0.3)
+        self.speed_y = random.uniform(-1.0, 1.0)
+        self.dir_change_timer = random.randint(30, 90)
 
     def update(self):
+        self.dir_change_timer -= 1
+        if self.dir_change_timer <= 0:
+            self.speed_x = random.uniform(-1.5, -0.3)
+            self.speed_y = random.uniform(-1.0, 1.0)
+            self.dir_change_timer = random.randint(30, 90)
+
         self.rect.x += self.speed_x
         self.rect.y += self.speed_y
 
-        if (
-            self.rect.top > self.screen_height
-            or self.rect.left > self.screen_width
-            or self.rect.right < 0
-        ):
-            max_x = max(1, self.screen_width - self.rect.width)
-            self.rect.x = random.randint(0, max_x)
-            self.rect.y = random.randint(-100, -10)
+        if (self.rect.right < 0 or
+                self.rect.bottom < 0 or self.rect.top > self.screen_height):
+            self.rect.x = self.screen_width
+            self.rect.y = random.randint(0, self.screen_height - self.rect.height)
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -49,27 +52,19 @@ class Menu:
         self.button_hover = (46, 139, 87)
         self.text_color = (255, 255, 255)
 
-        self.title_text = "Garden RPG"
+        self.title_text = "GARDENATOR"
 
         # Načtení obrázků
         asset_path = os.path.join(os.path.dirname(__file__), "..", "assets")
-        leaf_img_path = os.path.join(asset_path, "leaf.png")
         bee_img_path = os.path.join(asset_path, "bee.png")
-
-        self.leaf_img = pygame.transform.scale(
-            pygame.image.load(leaf_img_path).convert_alpha(), (32, 32)
-        )
         self.bee_img = pygame.transform.scale(
             pygame.image.load(bee_img_path).convert_alpha(), (32, 32)
         )
 
-        self.falling_leaves = [
-            FlyingSprite(self.leaf_img, screen.get_width(), screen.get_height())
-            for _ in range(20)
-        ]
+        # Včely
         self.bees = [
-            FlyingSprite(self.bee_img, screen.get_width(), screen.get_height(), is_bee=True)
-            for _ in range(5)
+            FlyingSprite(self.bee_img, screen.get_width(), screen.get_height())
+            for _ in range(3)
         ]
 
     def run(self):
@@ -91,16 +86,12 @@ class Menu:
                     gameplay.run()
 
     def update(self):
-        for leaf in self.falling_leaves:
-            leaf.update()
         for bee in self.bees:
             bee.update()
 
     def draw(self):
         self.screen.fill(self.bg_color)
 
-        for leaf in self.falling_leaves:
-            leaf.draw(self.screen)
         for bee in self.bees:
             bee.draw(self.screen)
 
