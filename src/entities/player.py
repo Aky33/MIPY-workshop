@@ -99,7 +99,7 @@ class Player:
         if dx == 0 and dy == 0 or self.energy <= 0:
             self.idle_ticks += 1
             if self.idle_ticks > 180:
-                self.energy = min(100, self.energy + 0.001 * self.fitness)
+                self.energy = min(100, self.energy + 0.005)  # Regenerace energie při nečinnosti
             return False
         else:
             self.idle_ticks = 0
@@ -119,12 +119,12 @@ class Player:
         self.rect = next_position
         self.is_moving = True
         self.exp += 1
-        self.energy = max(0, self.energy - 0.2)
+        self.energy = max(0, self.energy - 0.1)
 
         if self.exp >= 100:
             self.exp = 0
             self.fitness += 1
-            self.energy = min(100, self.energy + 10)
+            self.energy = min(100, self.energy + 4)
 
         return True
 
