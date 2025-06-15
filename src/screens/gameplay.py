@@ -11,6 +11,7 @@ from src.gameplay.inventory import Inventory
 from src.screens.inventory_interface import InventoryInterface
 from src.entities.carrot_seed import CarrotSeed
 from src.engine.day_cycle import DayCycle
+from src.engine.audio_manager import AudioManager
 
 class Gameplay:
     def __init__(self, screen):
@@ -56,6 +57,11 @@ class Gameplay:
         self.pause_image = pygame.image.load(pause_icon_path).convert_alpha()
         self.pause_image = pygame.transform.scale(self.pause_image, (200, 200))
         self.pause_rect = self.pause_image.get_rect(center=(self.screen_width // 2, 40))
+
+        # Audio
+        audio_path = os.path.join(os.path.dirname(__file__), "..", "assets", "sounds", "background")
+        self.audio_manager = AudioManager(audio_path)
+        self.audio_manager.play()
 
     def run(self):
         while self.running:
@@ -117,27 +123,7 @@ class Gameplay:
     def update(self):
         dt = self.clock.get_time() / 1000  # delta time in seconds
         self.day_cycle.update(dt)
-
-        keys = pygame.key.get_pressed()
-        dx, dy = self.player.handle_input(keys)
-        self.player.move(dx, dy, self.obstacles)
-
-        if self.player.interacting:
-            plant_loc = (self.player.rect.centerx, self.player.rect.bottom)
-            self.harvest_plant(plant_loc)
-            if self.can_plant():
-                self.plant_seed(plant_loc)
-
-        for plant in self.plants:
-            plant.update()
-
-        # Snížení energie v noci
-        if self.day_cycle.time_of_day == "night":
-            self.player.energy = max(0, self.player.energy - 0.05)
-
-    def update(self):
-        dt = self.clock.get_time() / 1000  # delta time in seconds
-        self.day_cycle.update(dt)
+        self.audio_manager.update()
 
         keys = pygame.key.get_pressed()
         dx, dy = self.player.handle_input(keys)
