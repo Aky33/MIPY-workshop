@@ -11,7 +11,6 @@ class FlyingSprite:
         self.screen_width = screen_width
         self.screen_height = screen_height
 
-        # Včely létají zprava doleva
         self.rect.x = random.randint(0, screen_width - self.rect.width)
         self.rect.y = random.randint(0, screen_height - self.rect.height)
         self.speed_x = random.uniform(-1.5, -0.3)
@@ -29,7 +28,7 @@ class FlyingSprite:
         self.rect.y += self.speed_y
 
         if (self.rect.right < 0 or
-                self.rect.bottom < 0 or self.rect.top > self.screen_height):
+            self.rect.bottom < 0 or self.rect.top > self.screen_height):
             self.rect.x = self.screen_width
             self.rect.y = random.randint(0, self.screen_height - self.rect.height)
 
@@ -42,25 +41,24 @@ class Menu:
         self.screen = screen
         self.clock = pygame.time.Clock()
         self.running = True
-        self.font_title = pygame.font.SysFont("Georgia", 60, bold=True)
-        self.font_button = pygame.font.SysFont("Arial", 32)
 
-        self.start_button_rect = pygame.Rect(220, 250, 200, 60)
-
-        self.bg_color = (144, 238, 144)
-        self.button_color = (60, 179, 113)
-        self.button_hover = (46, 139, 87)
-        self.text_color = (255, 255, 255)
-
-        self.title_text = "GARDENATOR"
-
-        # Načtení obrázků
+        # Cesty
         tiles_path = os.path.join(os.path.dirname(__file__), "..", "assets", "tiles")
         bee_img_path = os.path.join(tiles_path, "bee.png")
+        start_icon_path = os.path.join(tiles_path, "start_icon.png")
+        background_path = os.path.join(tiles_path, "menu_background.png")
 
+        # Načtení obrázků
         self.bee_img = pygame.transform.scale(
             pygame.image.load(bee_img_path).convert_alpha(), (32, 32)
         )
+        self.start_icon = pygame.transform.scale(
+            pygame.image.load(start_icon_path).convert_alpha(), (200, 200)
+        )
+        self.background = pygame.image.load(background_path).convert()
+        self.background = pygame.transform.scale(self.background, screen.get_size())
+
+        self.start_button_rect = self.start_icon.get_rect(center=(self.screen.get_width() // 2, 260))
 
         # Včely
         self.bees = [
@@ -91,19 +89,14 @@ class Menu:
             bee.update()
 
     def draw(self):
-        self.screen.fill(self.bg_color)
+        self.screen.blit(self.background, (0, 0))
 
         for bee in self.bees:
             bee.draw(self.screen)
 
-        title = self.font_title.render(self.title_text, True, (34, 85, 34))
-        title_rect = title.get_rect(center=(self.screen.get_width() // 2, 120))
-        self.screen.blit(title, title_rect)
-
+        # Zvýraznění ikony při přejetí
         mouse_pos = pygame.mouse.get_pos()
-        color = self.button_hover if self.start_button_rect.collidepoint(mouse_pos) else self.button_color
-        pygame.draw.rect(self.screen, color, self.start_button_rect, border_radius=12)
-
-        text = self.font_button.render("Start", True, self.text_color)
-        text_rect = text.get_rect(center=self.start_button_rect.center)
-        self.screen.blit(text, text_rect)
+        hovered = self.start_button_rect.collidepoint(mouse_pos)
+        icon = self.start_icon.copy()
+        icon.set_alpha(255 if hovered else 200)
+        self.screen.blit(icon, self.start_button_rect)

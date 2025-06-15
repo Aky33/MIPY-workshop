@@ -11,15 +11,15 @@ class Player:
         self.rect = pygame.Rect(position_x, position_y, width, height)
         self.speed = speed
         self.exp = 0
-        self.fitness = 1  # úroveň fyzické zdatnosti
+        self.fitness = 1
         self.energy = 100
 
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.interacting = False
 
-        self.food = 3  # počet jídel
-        self.idle_ticks = 0  # počet snímků bez pohybu
+        self.food = 3
+        self.idle_ticks = 0
 
     def handle_input(self, keys):
         self.interacting = keys[pygame.K_SPACE]
@@ -35,8 +35,8 @@ class Player:
     def move(self, dx, dy, obstacles):
         if dx == 0 and dy == 0 or self.energy <= 0:
             self.idle_ticks += 1
-            if self.idle_ticks > 180:  # asi 3 sekundy nečinnosti při 60 FPS
-                self.energy = min(100, self.energy + 0.05)
+            if self.idle_ticks > 180:
+                self.energy = min(100, self.energy + 0.001 * self.fitness)
             return
         else:
             self.idle_ticks = 0
@@ -55,12 +55,42 @@ class Player:
 
         self.rect = next_position
         self.exp += 1
-        self.energy = max(0, self.energy - 0.2)  # mírné snížení energie při pohybu
+        self.energy = max(0, self.energy - 0.2)
 
         if self.exp >= 100:
             self.exp = 0
             self.fitness += 1
             self.energy = min(100, self.energy + 10)
+
+    def harvest(self):
+        """Volá se při sklizni rostliny"""
+        # Sklizeň je náročná činnost
+        base_cost = 10.0  # základní náklady na energii
+        fitness_modifier = 0.25  # každý bod fitness snižuje náklady
+        min_cost = 4.0
+
+        energy_cost = max(min_cost, base_cost - self.fitness * fitness_modifier)
+
+        if self.energy < energy_cost:
+            print(f"Nemáš dost energie na sklizeň! Potřebuješ alespoň {energy_cost:.1f}, máš {self.energy:.1f}.")
+            return
+
+        # EXP a fitness zisk závisí na aktuální únavě
+        exp_gain = int(8 + (100 - self.energy) / 8)
+        fitness_gain = 1 if self.energy < 20 else 0
+
+        self.energy -= energy_cost
+        self.exp += exp_gain
+
+        if self.exp >= 100:
+            self.exp = 0
+            self.fitness += 1
+            print(f"Level UP! Nová úroveň fitness: {self.fitness}")
+        elif fitness_gain:
+            self.fitness += 1
+            print("Získal jsi fitness bod za sklizeň s nízkou energií.")
+
+        print(f"Sklizeno! -{energy_cost:.1f} energie, +{exp_gain} EXP")
 
     def eat(self, amount=20):
         if self.food > 0:
