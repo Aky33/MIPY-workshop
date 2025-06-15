@@ -6,5 +6,5 @@ class Wheat(Plant):
     def __init__(self, pos, growth_time = 600, growth_speed = 1):
         super().__init__("wheat", pos, AssetManager().get_plant_images("wheat"), growth_time, growth_speed)
 
-    def get_item():
+    def get_item(self):
         return Item("wheat", "Wheat", AssetManager().get_icon("wheat"))

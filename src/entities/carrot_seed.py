@@ -8,6 +8,7 @@ class CarrotSeed(Seed):
         self.id = "carrotSeed"
         self.name = "Carrot Seeds"
         self.icon_asset = AssetManager().get_seed_icon("carrotSeeds")
+        self.plantable = True
     
-    def associated_plant():
+    def associated_plant(self):
         return Carrot((0, 0))
