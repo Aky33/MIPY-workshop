@@ -47,25 +47,8 @@ class Player:
                 "down": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle.png")).convert_alpha(),
                 "up": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_up.png")).convert_alpha(),
                 "left": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_left.png")).convert_alpha(),
-                "right": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_right.png")).convert_alpha(),
-
-                "right_up": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_right_up.png")).convert_alpha(),
-                "right_down": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_right_down.png")).convert_alpha(),
-                "left_up": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_left_up.png")).convert_alpha(),
-                "left_down": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_left_down.png")).convert_alpha()
-            },
-            "right_up": [
-                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_right_up.png")).convert_alpha()
-            ],
-            "right_down": [
-                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_right_down.png")).convert_alpha()
-            ],
-            "left_up": [
-                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_left_up.png")).convert_alpha()
-            ],
-            "left_down": [
-                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_left_down.png")).convert_alpha()
-            ]
+                "right": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_right.png")).convert_alpha()
+            }
         }
         self.is_moving = False
 
@@ -79,15 +62,7 @@ class Player:
             vec = vec / np.linalg.norm(vec)
 
             # Zistenie smeru
-            if dx > 0 and dy < 0:
-                self.last_dir = "right_up"
-            elif dx > 0 and dy > 0:
-                self.last_dir = "right_down"
-            elif dx < 0 and dy < 0:
-                self.last_dir = "left_up"
-            elif dx < 0 and dy > 0:
-                self.last_dir = "left_down"
-            elif abs(dx) > abs(dy):
+            if abs(dx) > abs(dy):
                 self.last_dir = "right" if dx > 0 else "left"
             else:
                 self.last_dir = "down" if dy > 0 else "up"
@@ -218,13 +193,20 @@ class Player:
             elif len(frames) == 1:
                 self.image = frames[0]
         else:
-            if self.last_dir in self.animations["idle"]:
-                self.image = self.animations["idle"][self.last_dir]
+            self.anim_index = 0  # reset animácie keď sa nehýbe
+
+            idle_anim = self.animations["idle"].get(self.last_dir)
+
+            if idle_anim is not None:
+                self.image = idle_anim
             else:
+                # Ak neexistuje diagonálny idle, fallback napr. z "right_down" → "right"
                 base_dir = self.last_dir.split("_")[0]
                 self.image = self.animations["idle"].get(base_dir, self.image)
 
 
         surface.blit(self.image, (self.rect.x + offset_x, self.rect.y + offset_y))
+        
         if debug:
             pygame.draw.rect(surface, (255, 255, 0, 150), self.rect)
+
