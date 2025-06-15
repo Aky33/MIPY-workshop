@@ -6,7 +6,7 @@ class Rim:
         self.height = 80
         self.width = screen_width
         self.y = screen_height - self.height
-        self.font = pygame.font.SysFont("Courier New", 28)  # font Courier New
+        self.font = pygame.font.SysFont("Courier New", 20)  # font Courier New
         self.player = player
         self.day_cycle = day_cycle
 
