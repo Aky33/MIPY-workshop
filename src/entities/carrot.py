@@ -1,6 +1,6 @@
 from src.entities.plant import Plant
 from src.engine.asset_manager import AssetManager
-from src.gameplay.inventory import Item
+from src.engine.inventory import Item
 
 class Carrot(Plant):
     def __init__(self, pos, growth_time = 600, growth_speed = 1):

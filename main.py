@@ -1,4 +1,3 @@
-from src.engine.game import Game
 from src.screens.menu import Menu
 from src.screens.intro import Intro
 
@@ -12,6 +11,3 @@ intro.run()
 
 menu = Menu(screen)
 menu.run()
-
-#game = Game()
-#game.run()

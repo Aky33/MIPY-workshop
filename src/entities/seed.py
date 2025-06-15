@@ -1,4 +1,4 @@
-from src.gameplay.inventory import Item
+from src.engine.inventory import Item
 from src.entities.plant import Plant
 
 class Seed(Item):

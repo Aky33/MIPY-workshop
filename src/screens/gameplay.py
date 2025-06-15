@@ -8,7 +8,7 @@ from src.entities.carrot import Carrot
 from src.entities.wheat import Wheat
 from src.entities.house import House
 from src.screens.rim import Rim
-from src.gameplay.inventory import Inventory
+from src.engine.inventory import Inventory
 from src.screens.inventory_interface import InventoryInterface
 from src.entities.carrot_seed import CarrotSeed
 from src.engine.day_cycle import DayCycle
