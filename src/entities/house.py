@@ -18,7 +18,9 @@ class House:
         self.rect = self.interior_image.get_rect(topleft=position)
         self.bed_rect = self.bed_image.get_rect(center=(self.rect.centerx - 80, self.rect.centery + 30))
         self.bed_rect.inflate_ip(-16, -28) # Zmenseni kolizniho boxu
+        self.bed_interaction_rect = self.bed_rect.inflate(20, 20) # Vytvoření většího boxu pro interakci
         self.cauldron_rect = self.cauldron_image.get_rect(center=(self.rect.centerx - 67, self.rect.centery - 60))
+        self.cauldron_interaction_rect = self.cauldron_rect.inflate(20, 20) # Vytvoření většího boxu pro interakci
 
         # Definovani sten pro kolize
         top_thickness = 25
@@ -55,4 +57,6 @@ class House:
             for wall in self.walls:
                 pygame.draw.rect(surface, (255, 0, 0, 150), wall)
             pygame.draw.rect(surface, (0, 255, 0, 150), self.bed_rect)
+            pygame.draw.rect(surface, (255, 255, 0, 100), self.bed_interaction_rect) # Vykreslení interakčního boxu v debug modu
             pygame.draw.rect(surface, (0, 0, 255, 150), self.cauldron_rect)
+            pygame.draw.rect(surface, (255, 165, 0, 100), self.cauldron_interaction_rect) # Vykreslení interakčního boxu v debug modu

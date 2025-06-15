@@ -20,6 +20,9 @@ class Gameplay:
         self.paused = False
         self.debug_mode = False
         self.font = pygame.font.SysFont("Arial", 24)
+        self.prompt_font = pygame.font.SysFont("Arial", 18)
+        self.show_sleep_prompt = False
+        self.show_eat_prompt = False
 
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
@@ -78,10 +81,10 @@ class Gameplay:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F12:
                     self.debug_mode = not self.debug_mode
-                elif event.key == pygame.K_f:
-                    if self.player.rect.colliderect(self.house.bed_rect):
+                elif event.key == pygame.K_e:
+                    if self.player.rect.colliderect(self.house.bed_interaction_rect):
                         self.player.sleep()
-                    elif self.player.rect.colliderect(self.house.cauldron_rect):
+                    elif self.player.rect.colliderect(self.house.cauldron_interaction_rect):
                         self.player.eat()
 
     def harvest_plant(self, pos):
@@ -106,6 +109,17 @@ class Gameplay:
         for plant in self.plants:
             plant.update()
 
+        # Check for proximity to bed
+        if self.player.rect.colliderect(self.house.bed_interaction_rect):
+            self.show_sleep_prompt = True
+        else:
+            self.show_sleep_prompt = False
+
+        if self.player.rect.colliderect(self.house.cauldron_interaction_rect):
+            self.show_eat_prompt = True
+        else:
+            self.show_eat_prompt = False
+
     def draw(self):
         self.tilemap.render(self.screen)
         self.house.render(self.screen, self.debug_mode)
@@ -127,3 +141,15 @@ class Gameplay:
         # Lišta
         self.rim.draw(self.screen)
         self.inv_int.render(self.screen)
+
+        if self.show_sleep_prompt:
+            text = self.prompt_font.render("Press E to sleep", True, (255, 255, 255))
+            text_rect = text.get_rect(center=(self.player.rect.centerx, self.player.rect.top - 20))
+            pygame.draw.rect(self.screen, (0, 0, 0, 150), text_rect.inflate(10, 5))
+            self.screen.blit(text, text_rect)
+        
+        if self.show_eat_prompt:
+            text = self.prompt_font.render("Press E to eat", True, (255, 255, 255))
+            text_rect = text.get_rect(center=(self.player.rect.centerx, self.player.rect.top - 20))
+            pygame.draw.rect(self.screen, (0, 0, 0, 150), text_rect.inflate(10, 5))
+            self.screen.blit(text, text_rect)

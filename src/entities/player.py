@@ -99,7 +99,7 @@ class Player:
         min_cost = 4.0
         return max(min_cost, base_cost - self.fitness * fitness_modifier)
 
-    def eat(self, amount=20):
+    def eat(self, amount=50):
         if self.food > 0:
             self.food -= 1
             self.energy = min(100, self.energy + amount)
