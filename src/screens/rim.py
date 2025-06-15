@@ -6,7 +6,7 @@ class Rim:
         self.height = 80
         self.width = screen_width
         self.y = screen_height - self.height
-        self.font = pygame.font.SysFont("arial", 20, bold=True)
+        self.font = pygame.font.SysFont("Courier New", 22, bold=True)
         self.player = player
         self.day_cycle = day_cycle
 
@@ -87,12 +87,6 @@ class Rim:
         screen.blit(time_surface, time_rect)
         screen.blit(self.clock_icon, clock_icon_rect)
 
-        # Tooltipy
-        mouse_pos = pygame.mouse.get_pos()
-        if self.pause_button.collidepoint(mouse_pos):
-            self.draw_tooltip(screen, "Pause", self.pause_button)
-        elif self.quit_button.collidepoint(mouse_pos):
-            self.draw_tooltip(screen, "Quit", self.quit_button)
 
     def handle_click(self, pos):
         if self.pause_button.collidepoint(pos):

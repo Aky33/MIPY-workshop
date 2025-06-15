@@ -15,8 +15,8 @@ class SelectedItemIndicator:
     def render(self, surf):
         item = self.inventory.get_item(self.inventory.selected)
 
-        font = pygame.font.SysFont("arial", 22, bold=True)
-        amount_font = pygame.font.SysFont("arial", 18, bold=True)
+        font = pygame.font.SysFont("Courier New", 18, bold=True)
+        amount_font = pygame.font.SysFont("Courier New", 14, bold=True)
 
         rect = pygame.Rect(self.pos[0], self.pos[1], self.base_width, self.base_height)
         self._last_rect = rect
@@ -53,7 +53,7 @@ class SelectedItemIndicator:
             surf.blit(name_text, (text_x, self.pos[1] + self.vertical_padding))
             surf.blit(amount_text, (text_x, self.pos[1] + self.vertical_padding + name_text.get_height() + 8))
         else:
-            font = pygame.font.SysFont("arial", 20, bold=True)
+            font = pygame.font.SysFont("Courier New", 18, bold=True)
             text = font.render("No item selected", True, (100, 80, 40))
             surf.blit(text, (self.pos[0] + 16, self.pos[1] + (self.base_height - text.get_height()) // 2))
 
