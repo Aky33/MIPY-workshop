@@ -43,10 +43,8 @@ class Rim:
 
     def draw_tooltip(self, screen, text, button_rect):
         tooltip = self.font.render(text, True, (0, 0, 0))
-        bg_rect = tooltip.get_rect(midbottom=(button_rect.centerx, button_rect.top - 2))
+        bg_rect = tooltip.get_rect(midbottom=(button_rect.centerx, button_rect.top - 5))
         bg_rect.inflate_ip(6, 4)
-        pygame.draw.rect(screen, (255, 255, 200), bg_rect)
-        pygame.draw.rect(screen, (100, 100, 50), bg_rect, 1)
         screen.blit(tooltip, tooltip.get_rect(center=bg_rect.center))
 
     def draw(self, screen):
