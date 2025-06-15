@@ -6,8 +6,8 @@ class AudioManager:
         self.path = path
         self.playlist = self._load_playlist()
         self.current_track_index = 0
-        self.volume_levels = [0.07, 0.03, 0]  # High, Low, Mute
-        self.current_volume_index = 0  # Default to 8%
+        self.volume_levels = [0.1, 0.04, 0]  # High, Low, Mute
+        self.current_volume_index = 0  # Default to 10%
         
         if self.playlist:
             pygame.mixer.music.load(self.playlist[self.current_track_index])
