@@ -8,3 +8,7 @@ class Wheat(Plant):
 
     def get_item(self):
         return Item("wheat", "Wheat", AssetManager().get_icon("wheat"), price=20)
+    
+    def associated_seed(self):
+        from src.entities.wheat_seed import WheatSeed
+        return WheatSeed()

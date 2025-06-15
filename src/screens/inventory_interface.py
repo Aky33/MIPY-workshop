@@ -8,7 +8,7 @@ class InventoryInterface:
         self.inventory = inventory
         self.visual = InventoryVisual(inventory, grid_size=grid_size, pos=inv_pos)
         self.indicator = SelectedItemIndicator(inventory, pos=indicator_pos)
-        self.money_indicator = MoneyIndicator(inventory, (-10, -8))
+        self.money_indicator = MoneyIndicator(inventory, (-10, 25))
 
     def render(self, surf):
         self.visual.render(surf)

@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 class Player:
-    def __init__(self, position_x, position_y, width, height, speed, screen_width, screen_height):
+    def __init__(self, position_x, position_y, width, height, speed, screen_width, screen_height, day_cycle):
         self.image = pygame.image.load(
             os.path.join("src", "assets", "sprites", "player", "farmer_idle.png")
         ).convert_alpha()
@@ -17,7 +17,7 @@ class Player:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.interacting = False
-
+        self.day_cycle = day_cycle
         self.food = 3
         self.idle_ticks = 0
 
@@ -74,7 +74,7 @@ class Player:
         if dx == 0 and dy == 0 or self.energy <= 0:
             self.idle_ticks += 1
             if self.idle_ticks > 180:
-                self.energy = min(100, self.energy + 0.001 * self.fitness)
+                self.energy = min(100, self.energy + 0.005)  # Regenerace energie při nečinnosti
             return False
         else:
             self.idle_ticks = 0
@@ -94,16 +94,44 @@ class Player:
         self.rect = next_position
         self.is_moving = True
         self.exp += 1
-        self.energy = max(0, self.energy - 0.2)
+        self.energy = max(0, self.energy - 0.1)
 
         if self.exp >= 100:
             self.exp = 0
             self.fitness += 1
-            self.energy = min(100, self.energy + 10)
+            self.energy = min(100, self.energy + 4)
 
         return True
 
+    def can_sleep(self):
+        hour = int(self.day_cycle.get_hour())
+        return hour >= 21 or hour < 6
+
+    def can_work(self):
+        hour = int(self.day_cycle.get_hour())
+        return 6 <= hour < 21
+
+    def sleep(self):
+        current_time = self.day_cycle.get_time_string()
+        hours = int(current_time.split(":")[0])
+
+        # Spánek je povolen pouze mezi 21:00 a 06:00
+        if not (hours >= 21 or hours < 6):
+            print("Nemůžeš spát během dne!")
+            return
+
+        if self.energy < 100:
+            self.energy = 100
+            self.day_cycle.skip_to_morning()
+            print("Spánek dokončen. Energie doplněna a je 06:00.")
+        else:
+            print("Energie už je plná, spánek není potřeba.")
+
     def harvest(self):
+        if not self.can_work():
+            print("Rostliny můžeš sklízet jen mezi 06:00 a 21:00.")
+            return
+        
         """Volá se při sklizni rostliny"""
         # Sklizeň je náročná činnost
         base_cost = 10.0  # základní náklady na energii
@@ -147,13 +175,6 @@ class Player:
             print(f"Jídlo snědeno. Energie: {self.energy}, Zbývá jídlo: {self.food}")
         else:
             print("Nemáš žádné jídlo!")
-
-    def sleep(self):
-        if self.energy < 100:
-            self.energy = 100
-            print(f"Spánek doplnil energii: {self.energy}")
-        else:
-            print("Energie už je plná, spánek není potřeba.")
 
     def render(self, surface, debug=False):
         offset_x = -10
