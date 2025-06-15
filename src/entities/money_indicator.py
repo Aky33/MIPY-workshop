@@ -11,7 +11,7 @@ class MoneyIndicator:
         money = self.inventory.money
 
         # Prepare icon and text
-        icon_size = 28
+        icon_size = 32
         icon_surf = pygame.transform.smoothscale(icon, (icon_size, icon_size))
         font = pygame.font.SysFont("arial", 22, bold=True)
         money_text = font.render(str(money), True, (60, 40, 20))
@@ -23,4 +23,4 @@ class MoneyIndicator:
 
         # Draw icon and text (left-aligned)
         surf.blit(icon_surf, (x, y))
-        surf.blit(money_text, (x + icon_size + 4, y + (icon_size - money_text.get_height()) // 2))
+        surf.blit(money_text, (x + icon_size + 2, y + (icon_size - money_text.get_height()) // 2))
