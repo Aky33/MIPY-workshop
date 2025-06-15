@@ -12,13 +12,13 @@ class Inventory:
     def __init__(self):
         self.items = {}
 
-    def addItem(self, item):
+    def add_item(self, item):
         if item.id in self.items:
             self.items[item.id].amount += item.amount
         else:
             self.items[item.id] = Item(item.id, item.name, item.icon_asset, item.amount)
 
-    def removeItem(self, itemId, amount=1):
+    def remove_item(self, itemId, amount=1):
         if itemId in self.items:
             if self.items[itemId].amount > amount:
                 self.items[itemId].amount -= amount
@@ -29,9 +29,11 @@ class Inventory:
         else:
             print(f"Item {itemId} isn't in the inventory")
 
-    def getItem(self, item_id):
+    def get_item(self, item_id):
         return self.items.get(item_id, None)
 
-    def listItems(self):
+    def list_items(self):
         return list(self.items.values())
+
+
 
