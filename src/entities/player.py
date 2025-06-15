@@ -47,9 +47,25 @@ class Player:
                 "down": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle.png")).convert_alpha(),
                 "up": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_up.png")).convert_alpha(),
                 "left": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_left.png")).convert_alpha(),
-                "right": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_right.png")).convert_alpha()
+                "right": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_right.png")).convert_alpha(),
+
+                "right_up": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_right_up.png")).convert_alpha(),
+                "right_down": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_right_down.png")).convert_alpha(),
+                "left_up": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_left_up.png")).convert_alpha(),
+                "left_down": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_left_down.png")).convert_alpha()
             },
-            
+            "right_up": [
+                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_right_up.png")).convert_alpha()
+            ],
+            "right_down": [
+                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_right_down.png")).convert_alpha()
+            ],
+            "left_up": [
+                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_left_up.png")).convert_alpha()
+            ],
+            "left_down": [
+                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_left_down.png")).convert_alpha()
+            ]
         }
         self.is_moving = False
 
@@ -63,7 +79,15 @@ class Player:
             vec = vec / np.linalg.norm(vec)
 
             # Zistenie smeru
-            if abs(dx) > abs(dy):
+            if dx > 0 and dy < 0:
+                self.last_dir = "right_up"
+            elif dx > 0 and dy > 0:
+                self.last_dir = "right_down"
+            elif dx < 0 and dy < 0:
+                self.last_dir = "left_up"
+            elif dx < 0 and dy > 0:
+                self.last_dir = "left_down"
+            elif abs(dx) > abs(dy):
                 self.last_dir = "right" if dx > 0 else "left"
             else:
                 self.last_dir = "down" if dy > 0 else "up"
@@ -151,7 +175,7 @@ class Player:
 
     def sleep(self):
         if self.energy < 100:
-            self.energy = 100
+            self.energy = min(100, self.energy + 30)
             print(f"Spánek doplnil energii: {self.energy}")
         else:
             print("Energie už je plná, spánek není potřeba.")
