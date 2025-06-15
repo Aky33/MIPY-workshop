@@ -4,6 +4,7 @@ from src.entities.player import Player
 from src.engine.asset_manager import AssetManager
 from src.engine.tilemap import Tilemap
 from src.entities.plant import Plant
+from src.screens.rim import Rim
 
 class Gameplay:
     def __init__(self, screen):
@@ -13,39 +14,20 @@ class Gameplay:
         self.paused = False
         self.font = pygame.font.SysFont("Arial", 24)
 
-        # Rozměry obrazovky
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
 
-        # Tilemap
         self.assets = AssetManager()
         self.tilemap = Tilemap(self.assets)
-
-        # Hráč
         self.player = Player(100, 100, 40, 40, 5, self.screen_width, self.screen_height)
 
-        # Cesty k ikonám
-        asset_path = os.path.join(os.path.dirname(__file__), "..", "assets", "tiles")
-        pause_icon_path = os.path.join(asset_path, "pause.png")
-        quit_icon_path = os.path.join(asset_path, "quit.png")
+        # Lišta dole
+        self.rim = Rim(self.screen_width, self.screen_height, self.font, self.player)
+        self.obstacles = [self.rim.get_rect()]  # spodní lišta jako překážka
 
-
-        # Načtení a úprava ikon
-        self.pause_icon = pygame.transform.scale(
-            pygame.image.load(pause_icon_path).convert_alpha(), (32, 32)
-        )
-        self.quit_icon = pygame.transform.scale(
-            pygame.image.load(quit_icon_path).convert_alpha(), (32, 32)
-        )
-
-        # Umístění ikon
-        self.pause_button = self.pause_icon.get_rect(topright=(self.screen_width - 10, 10))
-        self.quit_button = self.quit_icon.get_rect(topright=(self.screen_width - 10, 50))
-
+        # Rostlina
         self.test_plant = Plant("carrot", (6, 6), self.assets.get_plant_images("carrot"))
         self.tilemap.add_plant(self.test_plant, (6, 6))
-
-        self.obstacles = []
 
     def run(self):
         while self.running:
@@ -61,17 +43,16 @@ class Gameplay:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if self.pause_button.collidepoint(event.pos):
+                action = self.rim.handle_click(event.pos)
+                if action == "pause":
                     self.paused = not self.paused
-                elif self.quit_button.collidepoint(event.pos):
+                elif action == "quit":
                     self.running = False
 
     def harvest_plant(self, pos):
         tile_pos = self.tilemap.pixel_to_tile_pos(pos)
         plant = self.tilemap.get_plant(tile_pos)
-        if not plant:
-            return
-        if plant.ready_to_harvest():
+        if plant and plant.ready_to_harvest():
             self.tilemap.harvest_plant(tile_pos)
             print("Harvested plant")
 
@@ -85,22 +66,15 @@ class Gameplay:
         self.test_plant.update()
 
     def draw(self):
-        self.tilemap.render(self.screen) # Tilemap - pozadí
+        self.tilemap.render(self.screen)
         self.test_plant.render(self.screen)
         self.player.render(self.screen)
-
-        # Info
-        info = self.font.render(
-            f"Level: {self.player.level}   EXP: {self.player.exp}/100", True, (117, 55, 19)
-        )
-        self.screen.blit(info, (10, 10))
-
-        # Tlačítka
-        self.screen.blit(self.pause_icon, self.pause_button)
-        self.screen.blit(self.quit_icon, self.quit_button)
 
         # Pauzová zpráva
         if self.paused:
             paused_msg = self.font.render("PAUZA", True, (117, 55, 19))
             msg_rect = paused_msg.get_rect(center=(self.screen_width // 2, 40))
             self.screen.blit(paused_msg, msg_rect)
+
+        # Lišta
+        self.rim.draw(self.screen)
