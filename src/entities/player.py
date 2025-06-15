@@ -175,7 +175,7 @@ class Player:
 
     def sleep(self):
         if self.energy < 100:
-            self.energy = min(100, self.energy + 30)
+            self.energy = 100
             print(f"Spánek doplnil energii: {self.energy}")
         else:
             print("Energie už je plná, spánek není potřeba.")
