@@ -7,6 +7,7 @@ class Rim:
         self.width = screen_width
         self.y = screen_height - self.height
         self.font = font
+        self.bar_font = pygame.font.SysFont("Courier New", 18)  # Písmo pro bary
         self.player = player
 
         # Cesta k ikonám
@@ -32,7 +33,7 @@ class Rim:
         pygame.draw.rect(screen, border_color, (x, y, width, height), 2)
 
         value_text = f"{label}: {int(value)}/{int(max_value)}"
-        text_surface = self.font.render(value_text, True, text_color)
+        text_surface = self.bar_font.render(value_text, True, text_color)
         text_rect = text_surface.get_rect(center=(x + width // 2, y + height // 2))
         screen.blit(text_surface, text_rect)
 
