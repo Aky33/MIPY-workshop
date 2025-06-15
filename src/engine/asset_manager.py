@@ -55,6 +55,16 @@ class AssetManager:
         x = (i * TILE_SIZE) % self.asset_list["iconset"].get_width()
         y = (i * TILE_SIZE) // self.asset_list["iconset"].get_width()
         return self.asset_list["iconset"].subsurface(x, y, ICON_SIZE, ICON_SIZE)
+    
+    def get_icon(self, name):
+        if self.iconset_map.get(name) == None:
+            print(f"Icon name {name} is invalid!")
+            return
+        
+        i = self.iconset_map[name]
+        x = (i * TILE_SIZE) % self.asset_list["iconset"].get_width()
+        y = (i * TILE_SIZE) // self.asset_list["iconset"].get_width()
+        return self.asset_list["iconset"].subsurface(x, y, ICON_SIZE, ICON_SIZE)
         
     def prepare_tiles(self):
         tileset = self.load_image(self.tileset_path)

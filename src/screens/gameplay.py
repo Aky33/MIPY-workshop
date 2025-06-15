@@ -7,6 +7,9 @@ from src.entities.plant import Plant
 from src.entities.carrot import Carrot
 from src.entities.wheat import Wheat
 from src.screens.rim import Rim
+from src.gameplay.inventory import Inventory
+from src.screens.inventory_interface import InventoryInterface
+from src.entities.carrot_seed import CarrotSeed
 
 class Gameplay:
     def __init__(self, screen):
@@ -26,6 +29,10 @@ class Gameplay:
         # Lišta dole
         self.rim = Rim(self.screen_width, self.screen_height, self.font, self.player)
         self.obstacles = [self.rim.get_rect()]  # spodní lišta jako překážka
+
+        self.inventory = Inventory()
+        self.inventory.add_item(CarrotSeed(10))
+        self.inv_int = InventoryInterface(self.inventory)
 
         # Rostliny
         self.plants = []
@@ -52,6 +59,7 @@ class Gameplay:
 
     def handle_events(self):
         for event in pygame.event.get():
+            self.inv_int.handle_event(event)
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -89,6 +97,8 @@ class Gameplay:
             plant.render(self.screen)
 
         self.player.render(self.screen)
+
+        self.inv_int.render(self.screen)
 
         # Pauzová zpráva jako obrázek
         if self.paused:

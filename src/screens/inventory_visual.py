@@ -1,14 +1,17 @@
 import pygame
 
 class InventoryVisual:
-    def __init__(self, inventory, grid_size=(5, 3), cell_size=48, margin=12, pos=(50, 50)):
+    def __init__(self, inventory, grid_size=(5, 3), cell_size=52, margin=12, pos=(50, 50), cell_padding=6):
         self.inventory = inventory
         self.bg_color = (220, 200, 120)
         self.border_color = (160, 140, 80)
+        self.selected_color = (255, 220, 80)
         self.cell_size = cell_size
         self.grid_size = grid_size  # (cols, rows)
         self.margin = margin
         self.pos = pos  # Top-left position of inventory
+        self.cell_padding = cell_padding
+        self.visible = False  # Inventory is closed by default
 
     def draw_background(self, surf):
         width = self.grid_size[0] * self.cell_size + self.margin * 2
@@ -23,12 +26,21 @@ class InventoryVisual:
         for i in range(cols * rows):
             x = i % cols
             y = i // cols
-            cell_x = self.pos[0] + self.margin + x * self.cell_size
-            cell_y = self.pos[1] + self.margin + y * self.cell_size
-            cell_rect = pygame.Rect(cell_x, cell_y, self.cell_size, self.cell_size)
-            # Draw cell background
-            pygame.draw.rect(surf, (245, 230, 170), cell_rect, border_radius=8)
-            pygame.draw.rect(surf, self.border_color, cell_rect, width=2, border_radius=8)
+            cell_x = self.pos[0] + self.margin + x * self.cell_size + self.cell_padding // 2
+            cell_y = self.pos[1] + self.margin + y * self.cell_size + self.cell_padding // 2
+            cell_rect = pygame.Rect(
+                cell_x,
+                cell_y,
+                self.cell_size - self.cell_padding,
+                self.cell_size - self.cell_padding
+            )
+            # Highlight if selected
+            if i < len(items) and self.inventory.selected == items[i].id:
+                pygame.draw.rect(surf, self.selected_color, cell_rect, border_radius=8)
+                pygame.draw.rect(surf, (255, 180, 40), cell_rect, width=3, border_radius=8)
+            else:
+                pygame.draw.rect(surf, (245, 230, 170), cell_rect, border_radius=8)
+                pygame.draw.rect(surf, self.border_color, cell_rect, width=2, border_radius=8)
             # Draw item if present
             if i < len(items):
                 item = items[i]
@@ -46,6 +58,32 @@ class InventoryVisual:
                     surf.blit(outline, text_rect.move(1, 1))
                     surf.blit(text, text_rect)
 
-    def draw(self, surf):
-        self.draw_background(surf)
-        self.draw_grid(surf)
+    def render(self, surf):
+        if self.visible:
+            self.draw_background(surf)
+            self.draw_grid(surf)
+
+    def handle_event(self, event):
+        if not self.visible:
+            return
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mouse_x, mouse_y = event.pos
+            cols, rows = self.grid_size
+            for i in range(cols * rows):
+                x = i % cols
+                y = i // cols
+                cell_x = self.pos[0] + self.margin + x * self.cell_size + self.cell_padding // 2
+                cell_y = self.pos[1] + self.margin + y * self.cell_size + self.cell_padding // 2
+                cell_rect = pygame.Rect(
+                    cell_x,
+                    cell_y,
+                    self.cell_size - self.cell_padding,
+                    self.cell_size - self.cell_padding
+                )
+                if cell_rect.collidepoint(mouse_x, mouse_y):
+                    items = self.inventory.list_items()
+                    if i < len(items):
+                        self.inventory.selected = items[i].id
+                    else:
+                        self.inventory.selected = None
+                    break
