@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 class Player:
-    def __init__(self, position_x, position_y, width, height, speed, screen_width, screen_height, day_cycle):
+    def __init__(self, position_x, position_y, width, height, speed, screen_width, screen_height, day_cycle, inventory):
         self.image = pygame.image.load(
             os.path.join("src", "assets", "sprites", "player", "farmer_idle.png")
         ).convert_alpha()
@@ -13,6 +13,7 @@ class Player:
         self.exp = 0
         self.fitness = 1
         self.energy = 100
+        self.inventory = inventory
 
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -168,13 +169,17 @@ class Player:
         min_cost = 4.0
         return max(min_cost, base_cost - self.fitness * fitness_modifier)
 
-    def eat(self, amount=50):
+    def eat(self, amount=50, cost=20):
         if self.food > 0:
             self.food -= 1
             self.energy = min(100, self.energy + amount)
             print(f"Jídlo snědeno. Energie: {self.energy}, Zbývá jídlo: {self.food}")
+        elif self.inventory.money >= cost:
+            self.inventory.money -= cost
+            self.energy = min(100, self.energy + amount)
+            print(f"Jídlo zakoupeno za {cost}. Energie: {self.energy}")
         else:
-            print("Nemáš žádné jídlo!")
+            print(f"Nemáš dostatek jídla ani peněz ({self.inventory.money}/{cost})!")
 
     def render(self, surface, debug=False):
         offset_x = -10
