@@ -12,6 +12,7 @@ class Inventory:
     def __init__(self):
         self.items = {}
         self.selected = None
+        self.money = 0
 
     def add_item(self, item):
         if item.id in self.items:

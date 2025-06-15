@@ -3,7 +3,7 @@ from src.screens.inventory_visual import InventoryVisual
 from src.entities.selected_item_indicator import SelectedItemIndicator
 
 class InventoryInterface:
-    def __init__(self, inventory, grid_size=(5, 3), inv_pos=(20, 100), indicator_pos=(20, 20)):
+    def __init__(self, inventory, grid_size=(5, 3), inv_pos=(180, 215), indicator_pos=(262, 405)):
         self.inventory = inventory
         self.visual = InventoryVisual(inventory, grid_size=grid_size, pos=inv_pos)
         self.indicator = SelectedItemIndicator(inventory, pos=indicator_pos)

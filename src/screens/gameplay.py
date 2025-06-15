@@ -98,11 +98,11 @@ class Gameplay:
 
         self.player.render(self.screen)
 
-        self.inv_int.render(self.screen)
-
         # Pauzová zpráva jako obrázek
         if self.paused:
             self.screen.blit(self.pause_image, self.pause_rect)
 
         # Lišta
         self.rim.draw(self.screen)
+
+        self.inv_int.render(self.screen)
