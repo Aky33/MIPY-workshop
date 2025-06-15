@@ -101,13 +101,20 @@ class Gameplay:
     
     def plant_seed(self, pos):
         tile_pos = self.tilemap.pixel_to_tile_pos(pos)
-        seed = self.inventory.selected
-        if self.tilemap.get_plant(tile_pos) != False:
-            print("Cant plant, farmland already occupied")
-        self.tilemap.add_plant(seed.associated_plant(), tile_pos)
+        seed = self.inventory.get_item(self.inventory.selected)
+        if self.tilemap.get_plant(tile_pos) != False or not self.tilemap.is_farmland(tile_pos):
+            print("Cant plant, invalid location or already occupied")
+            return
+        plant = seed.associated_plant()
+        self.tilemap.add_plant(plant, tile_pos)
+        self.plants.append(plant)
+        self.inventory.remove_item(seed.id)
+        print(f"Planted {seed.name}")
 
     def can_plant(self):
-        return self.inventory.selected != None and self.inventory.selected.plantable == True
+        item = self.inventory.get_item(self.inventory.selected)
+        if item == None: return False
+        return self.inventory.selected != None and item.plantable == True
 
 
     def update(self):

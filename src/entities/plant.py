@@ -13,7 +13,7 @@ class Plant:
         self.progress += self.growth_speed
         
     def ready_to_harvest(self):
-        return self.progress > self.growth_speed
+        return self.progress > self.growth_time
     
     # To be implemented by child classes
     def get_item(self):

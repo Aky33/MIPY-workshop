@@ -7,5 +7,5 @@ class Seed(Item):
         super().__init__("defSeed", "default", "", amount)
         self.plantable = True
 
-    def associated_plant():
+    def associated_plant(self):
         return Plant("default", (0, 0), [])

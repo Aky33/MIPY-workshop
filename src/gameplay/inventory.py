@@ -19,7 +19,7 @@ class Inventory:
         if item.id in self.items:
             self.items[item.id].amount += item.amount
         else:
-            self.items[item.id] = Item(item.id, item.name, item.icon_asset, item.amount)
+            self.items[item.id] = item
 
     def remove_item(self, itemId, amount=1):
         if itemId in self.items:
