@@ -32,7 +32,7 @@ class Gameplay:
 
         self.assets = AssetManager()
         self.tilemap = Tilemap(self.assets)
-        self.player = Player(100, 100, 40, 40, 5, self.screen_width, self.screen_height)
+        self.player = Player(100, 100, 40, 40, 5, self.screen_width, self.screen_height, self.day_cycle)
 
         # Lišta dole – s day_cycle
         self.rim = Rim(self.screen_width, self.screen_height, self.font, self.player, self.day_cycle)

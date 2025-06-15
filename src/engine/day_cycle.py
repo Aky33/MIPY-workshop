@@ -37,3 +37,12 @@ class DayCycle:
         hours = int(total_minutes // 60) % 24
         minutes = int(total_minutes % 60)
         return f"{hours:02}:{minutes:02}"
+
+    def skip_to_morning(self):
+        self.time = 0.25 * self.day_length  # 06:00
+        self._update_time_of_day()
+
+    def get_hour(self):
+        total_minutes = (self.time / self.day_length) * 24 * 60
+        hours = int(total_minutes // 60) % 24
+        return hours

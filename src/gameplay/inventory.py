@@ -16,6 +16,7 @@ class Inventory:
         self.selected = None
         self.money = 0
         self.money_icon = assets.get_icon("money")
+        self.assets = assets
 
     def add_item(self, item):
         if item.id in self.items:
