@@ -31,7 +31,11 @@ class Gameplay:
         self.player = Player(100, 100, 40, 40, 5, self.screen_width, self.screen_height)
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         # Lišta dole – nyní s předáním day_cycle
+=======
+        # Lišta dole – nyní i s day_cycle
+>>>>>>> Stashed changes
 =======
         # Lišta dole – nyní i s day_cycle
 >>>>>>> Stashed changes
@@ -120,7 +124,11 @@ class Gameplay:
 
     def update(self):
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         dt = self.clock.get_time() / 1000
+=======
+        dt = self.clock.get_time() / 1000  # delta time in seconds
+>>>>>>> Stashed changes
 =======
         dt = self.clock.get_time() / 1000  # delta time in seconds
 >>>>>>> Stashed changes
@@ -140,6 +148,10 @@ class Gameplay:
             plant.update()
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+        # Snížení energie v noci
+>>>>>>> Stashed changes
 =======
         # Snížení energie v noci
 >>>>>>> Stashed changes
@@ -161,6 +173,7 @@ class Gameplay:
                     pygame.draw.rect(self.screen, (128, 0, 128, 150), obstacle)
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         # Pauza
         if self.paused:
             self.screen.blit(self.pause_image, self.pause_rect)
@@ -172,18 +185,30 @@ class Gameplay:
 
         # Denní doba overlay
 >>>>>>> Stashed changes
+=======
+        if self.paused:
+            self.screen.blit(self.pause_image, self.pause_rect)
+
+        # Denní doba overlay
+>>>>>>> Stashed changes
         overlay = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
         overlay.fill(self.day_cycle.get_overlay_color())
         self.screen.blit(overlay, (0, 0))
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         # Spodní lišta a inventář
 =======
+=======
+>>>>>>> Stashed changes
         # Volitelné – textová indikace denní doby (můžeš později smazat)
         time_text = self.font.render(self.day_cycle.time_of_day.upper(), True, (0, 0, 0))
         self.screen.blit(time_text, (10, 10))
 
         # Lišta dole a inventář
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         self.rim.draw(self.screen)
         self.inv_int.render(self.screen)
