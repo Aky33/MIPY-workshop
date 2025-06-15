@@ -12,6 +12,7 @@ from src.gameplay.inventory import Inventory
 from src.screens.inventory_interface import InventoryInterface
 from src.entities.carrot_seed import CarrotSeed
 from src.engine.day_cycle import DayCycle
+from src.engine.audio_manager import AudioManager
 
 class Gameplay:
     def __init__(self, screen):
@@ -58,6 +59,19 @@ class Gameplay:
         self.pause_image = pygame.transform.scale(self.pause_image, (200, 200))
         self.pause_rect = self.pause_image.get_rect(center=(self.screen_width // 2, 40))
 
+        # Audio
+        audio_path = os.path.join(os.path.dirname(__file__), "..", "assets", "sounds", "soundtrack-audio")
+        self.audio_manager = AudioManager(audio_path)
+        self.audio_manager.play()
+
+        # Volume Icons
+        self.volume_icons = {
+            "high": pygame.image.load(os.path.join("src", "assets", "sounds", "sound-button-icons", "volume-2.png")).convert_alpha(),
+            "low": pygame.image.load(os.path.join("src", "assets", "sounds", "sound-button-icons", "volume-1.png")).convert_alpha(),
+            "muted": pygame.image.load(os.path.join("src", "assets", "sounds", "sound-button-icons", "volume-x.png")).convert_alpha()
+        }
+        self.volume_button_rect = self.volume_icons["high"].get_rect(topleft=(10, 10))
+
     def run(self):
         while self.running:
             self.handle_events()
@@ -78,6 +92,10 @@ class Gameplay:
                     self.paused = not self.paused
                 elif action == "quit":
                     self.running = False
+                
+                if self.volume_button_rect.collidepoint(event.pos):
+                    self.audio_manager.cycle_volume()
+
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F12:
                     self.debug_mode = not self.debug_mode
@@ -128,6 +146,7 @@ class Gameplay:
     def update(self):
         dt = self.clock.get_time() / 1000  # delta time in seconds
         self.day_cycle.update(dt)
+        self.audio_manager.update()
 
         keys = pygame.key.get_pressed()
         dx, dy = self.player.handle_input(keys)
@@ -191,6 +210,15 @@ class Gameplay:
             text_rect = text.get_rect(center=(self.player.rect.centerx, self.player.rect.top - 20))
             pygame.draw.rect(self.screen, (0, 0, 0, 150), text_rect.inflate(10, 5))
             self.screen.blit(text, text_rect)
+
+        # Volume button
+        volume_state = self.audio_manager.get_volume_state()
+        icon = self.volume_icons[volume_state]
+        
+        # Vykreslení tlačítka s tlustším a zakulaceným okrajem
+        border_rect = self.volume_button_rect.inflate(4, 4)
+        pygame.draw.rect(self.screen, (255, 255, 255), border_rect, 2, border_radius=5)
+        self.screen.blit(icon, self.volume_button_rect)
         
         if self.show_eat_prompt:
             text = self.prompt_font.render("Press E to eat", True, (255, 255, 255))
