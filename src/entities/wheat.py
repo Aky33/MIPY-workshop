@@ -7,4 +7,4 @@ class Wheat(Plant):
         super().__init__("wheat", pos, AssetManager().get_plant_images("wheat"), growth_time, growth_speed)
 
     def get_item(self):
-        return Item("wheat", "Wheat", AssetManager().get_icon("wheat"))
+        return Item("wheat", "Wheat", AssetManager().get_icon("wheat"), price=20)

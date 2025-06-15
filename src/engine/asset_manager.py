@@ -17,7 +17,8 @@ class AssetManager:
         "wheatSeeds": 0,
         "carrotSeeds": 1,
         "wheat": 2,
-        "carrot": 3
+        "carrot": 3,
+        "money": 4
     }
 
     grow_frame_count = 3
