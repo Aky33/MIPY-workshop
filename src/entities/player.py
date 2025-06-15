@@ -21,6 +21,38 @@ class Player:
         self.food = 3
         self.idle_ticks = 0
 
+        self.anim_index = 0
+        self.anim_timer = 0
+        self.anim_delay = 10
+        self.last_dir = "down"
+
+        self.animations = {
+            "down": [
+                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_down_1.png")).convert_alpha(),
+                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_down_2.png")).convert_alpha()
+            ],
+            "up": [
+                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_up_1.png")).convert_alpha(),
+                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_up_2.png")).convert_alpha()
+            ],
+            "left": [
+                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_left.png")).convert_alpha(),
+                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_left_down.png")).convert_alpha()
+            ],
+            "right": [
+                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_right.png")).convert_alpha(),
+                pygame.image.load(os.path.join("src", "assets", "sprites", "player", "walk_right_down.png")).convert_alpha()
+            ],
+            "idle": {
+                "down": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle.png")).convert_alpha(),
+                "up": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_up.png")).convert_alpha(),
+                "left": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_left.png")).convert_alpha(),
+                "right": pygame.image.load(os.path.join("src", "assets", "sprites", "player", "farmer_idle_right.png")).convert_alpha()
+            },
+            
+        }
+        self.is_moving = False
+
     def handle_input(self, keys):
         self.interacting = keys[pygame.K_SPACE]
         dx = keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]
@@ -30,14 +62,21 @@ class Player:
         if vec.any():
             vec = vec / np.linalg.norm(vec)
 
+            # Zistenie smeru
+            if abs(dx) > abs(dy):
+                self.last_dir = "right" if dx > 0 else "left"
+            else:
+                self.last_dir = "down" if dy > 0 else "up"
+
         return vec[0] * self.speed, vec[1] * self.speed
 
     def move(self, dx, dy, obstacles):
+        self.is_moving = False
         if dx == 0 and dy == 0 or self.energy <= 0:
             self.idle_ticks += 1
             if self.idle_ticks > 180:
                 self.energy = min(100, self.energy + 0.001 * self.fitness)
-            return
+            return False
         else:
             self.idle_ticks = 0
 
@@ -47,13 +86,14 @@ class Player:
             next_position.right > self.screen_width or
             next_position.top < 0 or
             next_position.bottom > self.screen_height):
-            return
+            return False
 
         for obstacle in obstacles:
             if next_position.colliderect(obstacle):
-                return
+                return False
 
         self.rect = next_position
+        self.is_moving = True
         self.exp += 1
         self.energy = max(0, self.energy - 0.2)
 
@@ -61,6 +101,8 @@ class Player:
             self.exp = 0
             self.fitness += 1
             self.energy = min(100, self.energy + 10)
+
+        return True
 
     def harvest(self):
         """Volá se při sklizni rostliny"""
@@ -117,6 +159,27 @@ class Player:
     def render(self, surface, debug=False):
         offset_x = -10
         offset_y = -12
+
+        moving = self.is_moving  # detekcia pohybu
+
+        if moving:
+            frames = self.animations.get(self.last_dir, [])
+            if len(frames) > 1:
+                self.anim_timer += 1
+                if self.anim_timer >= self.anim_delay:
+                    self.anim_index = (self.anim_index + 1) % len(frames)
+                    self.anim_timer = 0
+                self.image = frames[self.anim_index]
+            elif len(frames) == 1:
+                self.image = frames[0]
+        else:
+            if self.last_dir in self.animations["idle"]:
+                self.image = self.animations["idle"][self.last_dir]
+            else:
+                base_dir = self.last_dir.split("_")[0]
+                self.image = self.animations["idle"].get(base_dir, self.image)
+
+
         surface.blit(self.image, (self.rect.x + offset_x, self.rect.y + offset_y))
         if debug:
             pygame.draw.rect(surface, (255, 255, 0, 150), self.rect)
