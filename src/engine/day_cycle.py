@@ -1,30 +1,39 @@
-import pygame
-
 class DayCycle:
-    def __init__(self, day_length_seconds=60):
-        self.day_length = day_length_seconds  # celý den v sekundách
-        self.time_elapsed = 0  # čas od začátku dne
-        self.time_of_day = "morning"  # počáteční stav
+    def __init__(self, day_length_seconds=120):
+        self.day_length = day_length_seconds
+        self.time = 0.25 * self.day_length  # start v 06:00
+        self.time_of_day = "morning"
 
     def update(self, dt):
-        self.time_elapsed += dt
-        cycle_progress = (self.time_elapsed % self.day_length) / self.day_length
+        self.time = (self.time + dt) % self.day_length
+        self._update_time_of_day()
 
-        if cycle_progress < 0.25:
+    def _update_time_of_day(self):
+        # Přepočítá čas na skutečné HH:MM
+        total_minutes = (self.time / self.day_length) * 24 * 60
+        hour = int(total_minutes // 60) % 24
+
+        if 6 <= hour < 11:
             self.time_of_day = "morning"
-        elif cycle_progress < 0.5:
+        elif 11 <= hour < 15:
+            self.time_of_day = "noon"
+        elif 15 <= hour < 21:
             self.time_of_day = "afternoon"
-        elif cycle_progress < 0.75:
-            self.time_of_day = "evening"
         else:
             self.time_of_day = "night"
 
     def get_overlay_color(self):
-        """Vrací barvu pro světelný overlay podle denní doby."""
-        overlays = {
-            "morning": (255, 255, 255, 0),
-            "afternoon": (255, 255, 224, 30),
-            "evening": (255, 140, 0, 80),
-            "night": (0, 0, 64, 120),
-        }
-        return overlays[self.time_of_day]
+        if self.time_of_day == "morning":
+            return (120, 120, 100, 80)     # tmavší rozbřesk
+        elif self.time_of_day == "noon":
+            return (255, 255, 255, 0)      # žádný filtr, plné světlo
+        elif self.time_of_day == "afternoon":
+            return (150, 130, 100, 50)     # teplé odpolední tóny
+        else:  # night
+            return (10, 10, 30, 130)       # velmi tmavá noc
+
+    def get_time_string(self):
+        total_minutes = (self.time / self.day_length) * 24 * 60
+        hours = int(total_minutes // 60) % 24
+        minutes = int(total_minutes % 60)
+        return f"{hours:02}:{minutes:02}"
