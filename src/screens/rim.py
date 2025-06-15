@@ -6,7 +6,7 @@ class Rim:
         self.height = 80
         self.width = screen_width
         self.y = screen_height - self.height
-        self.font = pygame.font.SysFont("Courier New", 28)  # font Courier New
+        self.font = pygame.font.SysFont("arial", 20, bold=True)
         self.player = player
         self.day_cycle = day_cycle
 
@@ -18,6 +18,7 @@ class Rim:
 
         self.pause_icon = load_icon("pause.png")
         self.quit_icon = load_icon("quit.png")
+        self.clock_icon = load_icon("clock.png")
 
         bottom = screen_height - 10
         self.pause_button = self.pause_icon.get_rect(bottomright=(screen_width - 10, bottom))
@@ -30,7 +31,7 @@ class Rim:
 
         value_text = f"{label}: {int(value)}/{int(max_value)}"
         text_surface = self.font.render(value_text, True, text_color)
-        text_rect = text_surface.get_rect(center=(x + width // 2, y + height // 2))
+        text_rect = text_surface.get_rect(center=(x + width // 2, y + height // 2 + 2)) # posun o 2px dolů
         screen.blit(text_surface, text_rect)
 
     def get_energy_color(self):
@@ -76,8 +77,15 @@ class Rim:
         # Čas v pravém horním rohu spodní lišty
         time_str = self.day_cycle.get_time_string()  # např. "08:15"
         time_surface = self.font.render(time_str, True, text_color)
+        
+        # Pozice pro text času
         time_rect = time_surface.get_rect(topright=(self.width - 10, self.y + 10))
+        
+        # Pozice pro ikonu hodin (nalevo od textu)
+        clock_icon_rect = self.clock_icon.get_rect(right=time_rect.left - 5, centery=time_rect.centery)
+        
         screen.blit(time_surface, time_rect)
+        screen.blit(self.clock_icon, clock_icon_rect)
 
         # Tooltipy
         mouse_pos = pygame.mouse.get_pos()
