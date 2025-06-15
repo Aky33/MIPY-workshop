@@ -4,6 +4,8 @@ from src.entities.player import Player
 from src.engine.asset_manager import AssetManager
 from src.engine.tilemap import Tilemap
 from src.entities.plant import Plant
+from src.entities.carrot import Carrot
+from src.entities.wheat import Wheat
 from src.screens.rim import Rim
 
 class Gameplay:
@@ -25,9 +27,13 @@ class Gameplay:
         self.rim = Rim(self.screen_width, self.screen_height, self.font, self.player)
         self.obstacles = [self.rim.get_rect()]  # spodní lišta jako překážka
 
-        # Rostlina
-        self.test_plant = Plant("carrot", (6, 6), self.assets.get_plant_images("carrot"))
-        self.tilemap.add_plant(self.test_plant, (6, 6))
+        # Rostliny
+        self.plants = []
+        self.plants.append(Carrot((6, 6)))
+        self.plants.append(Wheat((6, 7)))
+
+        self.tilemap.add_plant(self.plants[0], (6, 6))
+        self.tilemap.add_plant(self.plants[1], (6, 7))
 
     def run(self):
         while self.running:
@@ -63,11 +69,15 @@ class Gameplay:
         if self.player.interacting:
             plant_loc = (self.player.rect.centerx, self.player.rect.bottom)
             self.harvest_plant(plant_loc)
-        self.test_plant.update()
+        
+        for plant in self.plants:
+            plant.update()
 
     def draw(self):
         self.tilemap.render(self.screen)
-        self.test_plant.render(self.screen)
+        for plant in self.plants:
+            plant.render(self.screen)
+
         self.player.render(self.screen)
 
         # Pauzová zpráva
