@@ -6,10 +6,12 @@ class AudioManager:
         self.path = path
         self.playlist = self._load_playlist()
         self.current_track_index = 0
+        self.volume_levels = [0.07, 0.03, 0]  # High, Low, Mute
+        self.current_volume_index = 0  # Default to 8%
         
         if self.playlist:
             pygame.mixer.music.load(self.playlist[self.current_track_index])
-            pygame.mixer.music.set_volume(0.05) # Nastavení výchozí hlasitosti na 5%
+            pygame.mixer.music.set_volume(self.volume_levels[self.current_volume_index])
 
     def _load_playlist(self):
         if not os.path.exists(self.path):
@@ -24,10 +26,19 @@ class AudioManager:
         if self.playlist:
             pygame.mixer.music.play()
 
-    def set_volume(self, volume):
-        """Nastaví hlasitost hudby (0.0 až 1.0)"""
-        if self.playlist:
-            pygame.mixer.music.set_volume(volume)
+    def cycle_volume(self):
+        """Přepne na další úroveň hlasitosti."""
+        self.current_volume_index = (self.current_volume_index + 1) % len(self.volume_levels)
+        pygame.mixer.music.set_volume(self.volume_levels[self.current_volume_index])
+
+    def get_volume_state(self):
+        """Vrátí aktuální stav hlasitosti pro výběr ikony."""
+        if self.current_volume_index == 0:
+            return "high"
+        elif self.current_volume_index == 1:
+            return "low"
+        else:
+            return "muted"
 
     def update(self):
         if not pygame.mixer.music.get_busy() and self.playlist:
