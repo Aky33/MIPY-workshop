@@ -37,6 +37,11 @@ class Tilemap:
     
     def pixel_to_tile_pos(self, pos):
         return (pos[0] // self.tile_size, pos[1] // self.tile_size)
+    
+    def is_farmland(self, pos):
+        tileId = f"{pos[0]};{pos[1]}"
+        tile = self.tilemap[tileId]
+        return tile["type"] == "farmland"
 
     def get_plant(self, pos):
         tileId = f"{pos[0]};{pos[1]}"

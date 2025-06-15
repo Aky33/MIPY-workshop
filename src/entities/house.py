@@ -18,7 +18,7 @@ class House:
         self.rect = self.interior_image.get_rect(topleft=position)
         self.bed_rect = self.bed_image.get_rect(center=(self.rect.centerx - 80, self.rect.centery + 30))
         self.bed_rect.inflate_ip(-16, -28) # Zmenseni kolizniho boxu
-        self.bed_interaction_rect = self.bed_rect.inflate(20, 20) # Vytvoření většího boxu pro interakci
+        self.bed_interaction_rect = self.bed_rect.inflate(10, 20) # Vytvoření většího boxu pro interakci
         self.cauldron_rect = self.cauldron_image.get_rect(center=(self.rect.centerx - 67, self.rect.centery - 60))
         self.cauldron_interaction_rect = self.cauldron_rect.inflate(20, 20) # Vytvoření většího boxu pro interakci
 

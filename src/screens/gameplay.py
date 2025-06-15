@@ -11,18 +11,17 @@ from src.screens.rim import Rim
 from src.gameplay.inventory import Inventory
 from src.screens.inventory_interface import InventoryInterface
 from src.entities.carrot_seed import CarrotSeed
+from src.engine.day_cycle import DayCycle
 
 class Gameplay:
     def __init__(self, screen):
         self.screen = screen
         self.clock = pygame.time.Clock()
+        self.day_cycle = DayCycle(day_length_seconds=120)
         self.running = True
         self.paused = False
         self.debug_mode = False
         self.font = pygame.font.SysFont("Arial", 24)
-        self.prompt_font = pygame.font.SysFont("Arial", 18)
-        self.show_sleep_prompt = False
-        self.show_eat_prompt = False
 
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
@@ -31,9 +30,17 @@ class Gameplay:
         self.tilemap = Tilemap(self.assets)
         self.player = Player(100, 100, 40, 40, 5, self.screen_width, self.screen_height)
 
-        # Lišta dole
-        self.rim = Rim(self.screen_width, self.screen_height, self.font, self.player)
-        self.obstacles = [self.rim.get_rect()]  # spodní lišta jako překážka
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+        # Lišta dole – nyní s předáním day_cycle
+=======
+        # Lišta dole – nyní i s day_cycle
+>>>>>>> Stashed changes
+=======
+        # Lišta dole – nyní i s day_cycle
+>>>>>>> Stashed changes
+        self.rim = Rim(self.screen_width, self.screen_height, self.font, self.player, self.day_cycle)
+        self.obstacles = [self.rim.get_rect()]
 
         self.inventory = Inventory()
         self.inventory.add_item(CarrotSeed(10))
@@ -43,7 +50,6 @@ class Gameplay:
         self.plants = []
         self.plants.append(Carrot((6, 6)))
         self.plants.append(Wheat((6, 7)))
-
         self.tilemap.add_plant(self.plants[0], (6, 6))
         self.tilemap.add_plant(self.plants[1], (6, 7))
 
@@ -51,7 +57,7 @@ class Gameplay:
         self.house = House((self.screen_width - 210, 0))
         self.obstacles.extend(self.house.get_obstacles())
 
-        # Načtení pixelové pauza ikony
+        # Pauza obrázek
         pause_icon_path = os.path.join(os.path.dirname(__file__), "..", "assets", "tiles", "pause_icon_pixel.png")
         self.pause_image = pygame.image.load(pause_icon_path).convert_alpha()
         self.pause_image = pygame.transform.scale(self.pause_image, (200, 200))
@@ -77,14 +83,13 @@ class Gameplay:
                     self.paused = not self.paused
                 elif action == "quit":
                     self.running = False
-
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F12:
                     self.debug_mode = not self.debug_mode
-                elif event.key == pygame.K_e:
-                    if self.player.rect.colliderect(self.house.bed_interaction_rect):
+                elif event.key == pygame.K_f:
+                    if self.player.rect.colliderect(self.house.bed_rect):
                         self.player.sleep()
-                    elif self.player.rect.colliderect(self.house.cauldron_interaction_rect):
+                    elif self.player.rect.colliderect(self.house.cauldron_rect):
                         self.player.eat()
 
     def harvest_plant(self, pos):
@@ -94,35 +99,69 @@ class Gameplay:
             if self.player.energy >= self.player.get_required_energy_for_harvest():
                 self.player.harvest()
                 self.tilemap.harvest_plant(tile_pos)
+                self.inventory.add_item(plant.get_item())
                 print("Harvested plant")
             else:
                 print("Nedostatek energie na sklizeň.")
+    
+    def plant_seed(self, pos):
+        tile_pos = self.tilemap.pixel_to_tile_pos(pos)
+        seed = self.inventory.get_item(self.inventory.selected)
+        if self.tilemap.get_plant(tile_pos) != False or not self.tilemap.is_farmland(tile_pos):
+            print("Cant plant, invalid location or already occupied")
+            return
+        plant = seed.associated_plant()
+        self.tilemap.add_plant(plant, tile_pos)
+        self.plants.append(plant)
+        self.inventory.remove_item(seed.id)
+        print(f"Planted {seed.name}")
+
+    def can_plant(self):
+        item = self.inventory.get_item(self.inventory.selected)
+        if item == None: return False
+        return self.inventory.selected != None and item.plantable == True
+
 
     def update(self):
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+        dt = self.clock.get_time() / 1000
+=======
+        dt = self.clock.get_time() / 1000  # delta time in seconds
+>>>>>>> Stashed changes
+=======
+        dt = self.clock.get_time() / 1000  # delta time in seconds
+>>>>>>> Stashed changes
+        self.day_cycle.update(dt)
+
         keys = pygame.key.get_pressed()
         dx, dy = self.player.handle_input(keys)
         self.player.move(dx, dy, self.obstacles)
+
         if self.player.interacting:
             plant_loc = (self.player.rect.centerx, self.player.rect.bottom)
             self.harvest_plant(plant_loc)
+            if self.can_plant():
+                self.plant_seed(plant_loc)
 
         for plant in self.plants:
             plant.update()
 
-        # Check for proximity to bed
-        if self.player.rect.colliderect(self.house.bed_interaction_rect):
-            self.show_sleep_prompt = True
-        else:
-            self.show_sleep_prompt = False
-
-        if self.player.rect.colliderect(self.house.cauldron_interaction_rect):
-            self.show_eat_prompt = True
-        else:
-            self.show_eat_prompt = False
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+        # Snížení energie v noci
+>>>>>>> Stashed changes
+=======
+        # Snížení energie v noci
+>>>>>>> Stashed changes
+        if self.day_cycle.time_of_day == "night":
+            self.player.energy = max(0, self.player.energy - 0.05)
 
     def draw(self):
         self.tilemap.render(self.screen)
         self.house.render(self.screen, self.debug_mode)
+
         for plant in self.plants:
             plant.render(self.screen)
 
@@ -130,26 +169,46 @@ class Gameplay:
 
         if self.debug_mode:
             for obstacle in self.obstacles:
-                # Draw obstacles that are not part of the house (e.g., the rim)
                 if obstacle not in self.house.get_obstacles():
-                     pygame.draw.rect(self.screen, (128, 0, 128, 150), obstacle)
+                    pygame.draw.rect(self.screen, (128, 0, 128, 150), obstacle)
 
-        # Pauzová zpráva jako obrázek
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+        # Pauza
         if self.paused:
             self.screen.blit(self.pause_image, self.pause_rect)
 
-        # Lišta
+        # Overlay podle denní doby
+=======
+        if self.paused:
+            self.screen.blit(self.pause_image, self.pause_rect)
+
+        # Denní doba overlay
+>>>>>>> Stashed changes
+=======
+        if self.paused:
+            self.screen.blit(self.pause_image, self.pause_rect)
+
+        # Denní doba overlay
+>>>>>>> Stashed changes
+        overlay = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
+        overlay.fill(self.day_cycle.get_overlay_color())
+        self.screen.blit(overlay, (0, 0))
+
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+        # Spodní lišta a inventář
+=======
+=======
+>>>>>>> Stashed changes
+        # Volitelné – textová indikace denní doby (můžeš později smazat)
+        time_text = self.font.render(self.day_cycle.time_of_day.upper(), True, (0, 0, 0))
+        self.screen.blit(time_text, (10, 10))
+
+        # Lišta dole a inventář
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         self.rim.draw(self.screen)
         self.inv_int.render(self.screen)
-
-        if self.show_sleep_prompt:
-            text = self.prompt_font.render("Press E to sleep", True, (255, 255, 255))
-            text_rect = text.get_rect(center=(self.player.rect.centerx, self.player.rect.top - 20))
-            pygame.draw.rect(self.screen, (0, 0, 0, 150), text_rect.inflate(10, 5))
-            self.screen.blit(text, text_rect)
-        
-        if self.show_eat_prompt:
-            text = self.prompt_font.render("Press E to eat", True, (255, 255, 255))
-            text_rect = text.get_rect(center=(self.player.rect.centerx, self.player.rect.top - 20))
-            pygame.draw.rect(self.screen, (0, 0, 0, 150), text_rect.inflate(10, 5))
-            self.screen.blit(text, text_rect)
