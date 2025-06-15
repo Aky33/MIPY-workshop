@@ -4,6 +4,7 @@ class Item:
         self.name = name
         self.icon_asset = icon_asset
         self.amount = amount
+        self.plantable = False
 
     def __repr__(self):
         return f"Item(id={self.id}, name={self.name}, amount={self.amount})"

@@ -91,9 +91,21 @@ class Gameplay:
             if self.player.energy >= self.player.get_required_energy_for_harvest():
                 self.player.harvest()
                 self.tilemap.harvest_plant(tile_pos)
+                self.inventory.add_item(plant.get_item())
                 print("Harvested plant")
             else:
                 print("Nedostatek energie na sklizeň.")
+    
+    def plant_seed(self, pos):
+        tile_pos = self.tilemap.pixel_to_tile_pos(pos)
+        seed = self.inventory.selected
+        if self.tilemap.get_plant(tile_pos) != False:
+            print("Cant plant, farmland already occupied")
+        self.tilemap.add_plant(seed.associated_plant(), tile_pos)
+
+    def can_plant(self):
+        return self.inventory.selected != None and self.inventory.selected.plantable == True
+
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -102,6 +114,8 @@ class Gameplay:
         if self.player.interacting:
             plant_loc = (self.player.rect.centerx, self.player.rect.bottom)
             self.harvest_plant(plant_loc)
+            if self.can_plant():
+                self.plant_seed(plant_loc)
 
         for plant in self.plants:
             plant.update()
