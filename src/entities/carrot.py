@@ -8,4 +8,7 @@ class Carrot(Plant):
 
     def get_item(self):
         return Item("carrot", "Carrot", AssetManager().get_icon("carrot"), price=30)
-        
+    
+    def associated_seed(self):
+        from src.entities.carrot_seed import CarrotSeed
+        return CarrotSeed()

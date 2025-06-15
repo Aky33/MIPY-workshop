@@ -1,5 +1,6 @@
 import pygame
 import os
+import random
 from src.entities.player import Player
 from src.engine.asset_manager import AssetManager
 from src.engine.tilemap import Tilemap
@@ -94,6 +95,10 @@ class Gameplay:
                 self.player.harvest()
                 self.tilemap.harvest_plant(tile_pos)
                 self.inventory.add_item(plant.get_item())
+                amt = random.randint(1, 2)
+                item = plant.associated_seed()
+                item.amount = amt
+                self.inventory.add_item(item)
                 print("Harvested plant")
             else:
                 print("Nedostatek energie na sklizeň.")
