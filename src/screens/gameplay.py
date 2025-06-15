@@ -104,11 +104,17 @@ class Gameplay:
                 print("Nedostatek energie na sklizeň.")
 
     def plant_seed(self, pos):
+        if not self.player.can_work():
+            print("Sázet můžeš jen mezi 06:00 a 21:00.")
+            return
+
         tile_pos = self.tilemap.pixel_to_tile_pos(pos)
         seed = self.inventory.get_item(self.inventory.selected)
+
         if self.tilemap.get_plant(tile_pos) or not self.tilemap.is_farmland(tile_pos):
             print("Cant plant, invalid location or already occupied")
             return
+
         plant = seed.associated_plant()
         self.tilemap.add_plant(plant, tile_pos)
         self.plants.append(plant)
@@ -125,34 +131,16 @@ class Gameplay:
 
         keys = pygame.key.get_pressed()
         dx, dy = self.player.handle_input(keys)
-        self.player.move(dx, dy, self.obstacles)
-
-        if self.player.interacting:
-            plant_loc = (self.player.rect.centerx, self.player.rect.bottom)
-            self.harvest_plant(plant_loc)
-            if self.can_plant():
-                self.plant_seed(plant_loc)
-
-        for plant in self.plants:
-            plant.update()
-
-        # Snížení energie v noci
-        if self.day_cycle.time_of_day == "night":
-            self.player.energy = max(0, self.player.energy - 0.05)
-
-    def update(self):
-        dt = self.clock.get_time() / 1000  # delta time in seconds
-        self.day_cycle.update(dt)
-
-        keys = pygame.key.get_pressed()
-        dx, dy = self.player.handle_input(keys)
         self.player.is_moving = self.player.move(dx, dy, self.obstacles)
 
         if self.player.interacting:
             plant_loc = (self.player.rect.centerx, self.player.rect.bottom)
-            self.harvest_plant(plant_loc)
-            if self.can_plant():
-                self.plant_seed(plant_loc)
+            if self.player.can_work():
+                self.harvest_plant(plant_loc)
+                if self.can_plant():
+                    self.plant_seed(plant_loc)
+            else:
+                print("Nemůžeš pracovat v noci.")
 
         for plant in self.plants:
             plant.update()
