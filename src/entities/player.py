@@ -114,5 +114,9 @@ class Player:
         else:
             print("Energie už je plná, spánek není potřeba.")
 
-    def render(self, surface):
-        surface.blit(self.image, self.rect.topleft)
+    def render(self, surface, debug=False):
+        offset_x = -10
+        offset_y = -12
+        surface.blit(self.image, (self.rect.x + offset_x, self.rect.y + offset_y))
+        if debug:
+            pygame.draw.rect(surface, (255, 255, 0, 150), self.rect)

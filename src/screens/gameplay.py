@@ -6,6 +6,7 @@ from src.engine.tilemap import Tilemap
 from src.entities.plant import Plant
 from src.entities.carrot import Carrot
 from src.entities.wheat import Wheat
+from src.entities.house import House
 from src.screens.rim import Rim
 from src.gameplay.inventory import Inventory
 from src.screens.inventory_interface import InventoryInterface
@@ -17,6 +18,7 @@ class Gameplay:
         self.clock = pygame.time.Clock()
         self.running = True
         self.paused = False
+        self.debug_mode = False
         self.font = pygame.font.SysFont("Arial", 24)
 
         self.screen_width = screen.get_width()
@@ -41,6 +43,10 @@ class Gameplay:
 
         self.tilemap.add_plant(self.plants[0], (6, 6))
         self.tilemap.add_plant(self.plants[1], (6, 7))
+
+        # Dům
+        self.house = House((self.screen_width - 210, 0))
+        self.obstacles.extend(self.house.get_obstacles())
 
         # Načtení pixelové pauza ikony
         pause_icon_path = os.path.join(os.path.dirname(__file__), "..", "assets", "tiles", "pause_icon_pixel.png")
@@ -69,6 +75,15 @@ class Gameplay:
                 elif action == "quit":
                     self.running = False
 
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F12:
+                    self.debug_mode = not self.debug_mode
+                elif event.key == pygame.K_f:
+                    if self.player.rect.colliderect(self.house.bed_rect):
+                        self.player.sleep()
+                    elif self.player.rect.colliderect(self.house.cauldron_rect):
+                        self.player.eat()
+
     def harvest_plant(self, pos):
         tile_pos = self.tilemap.pixel_to_tile_pos(pos)
         plant = self.tilemap.get_plant(tile_pos)
@@ -93,10 +108,17 @@ class Gameplay:
 
     def draw(self):
         self.tilemap.render(self.screen)
+        self.house.render(self.screen, self.debug_mode)
         for plant in self.plants:
             plant.render(self.screen)
 
-        self.player.render(self.screen)
+        self.player.render(self.screen, self.debug_mode)
+
+        if self.debug_mode:
+            for obstacle in self.obstacles:
+                # Draw obstacles that are not part of the house (e.g., the rim)
+                if obstacle not in self.house.get_obstacles():
+                     pygame.draw.rect(self.screen, (128, 0, 128, 150), obstacle)
 
         # Pauzová zpráva jako obrázek
         if self.paused:
@@ -104,5 +126,4 @@ class Gameplay:
 
         # Lišta
         self.rim.draw(self.screen)
-
         self.inv_int.render(self.screen)
