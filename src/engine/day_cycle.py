@@ -1,30 +1,40 @@
-import pygame
-
 class DayCycle:
-    def __init__(self, day_length_seconds=60):
-        self.day_length = day_length_seconds  # celý den v sekundách
-        self.time_elapsed = 0  # čas od začátku dne
-        self.time_of_day = "morning"  # počáteční stav
+    def __init__(self, day_length_seconds=120):
+        self.day_length = day_length_seconds
+        # Start v 06:00 ⇒ odpovídá tomu, jako by uběhlo 6/24 = 0.25 cyklu
+        self.time_elapsed = 0.25 * self.day_length
+        self.time_of_day = "morning"  # Výchozí fáze
 
     def update(self, dt):
         self.time_elapsed += dt
-        cycle_progress = (self.time_elapsed % self.day_length) / self.day_length
+        if self.time_elapsed > self.day_length:
+            self.time_elapsed -= self.day_length
 
-        if cycle_progress < 0.25:
+        self._update_phase()
+
+    def _update_phase(self):
+        phase = self.time_elapsed / self.day_length
+        if phase < 0.25:
             self.time_of_day = "morning"
-        elif cycle_progress < 0.5:
+        elif phase < 0.5:
             self.time_of_day = "afternoon"
-        elif cycle_progress < 0.75:
+        elif phase < 0.75:
             self.time_of_day = "evening"
         else:
             self.time_of_day = "night"
 
     def get_overlay_color(self):
-        """Vrací barvu pro světelný overlay podle denní doby."""
-        overlays = {
-            "morning": (255, 255, 255, 0),
-            "afternoon": (255, 255, 224, 30),
-            "evening": (255, 140, 0, 80),
-            "night": (0, 0, 64, 120),
+        colors = {
+            "morning": (255, 255, 200, 40),
+            "afternoon": (255, 255, 255, 0),
+            "evening": (100, 100, 180, 60),
+            "night": (30, 30, 80, 120),
         }
-        return overlays[self.time_of_day]
+        return colors.get(self.time_of_day, (0, 0, 0, 0))
+
+    def get_time_string(self):
+        # Vrací čas ve formátu HH:MM (24h) podle aktuálního posunu
+        total_minutes = int((self.time_elapsed / self.day_length) * 24 * 60)
+        hours = total_minutes // 60
+        minutes = total_minutes % 60
+        return f"{hours:02}:{minutes:02}"
