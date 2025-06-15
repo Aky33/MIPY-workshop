@@ -1,5 +1,6 @@
 import pygame
 import os
+import numpy as np
 
 class Player:
     def __init__(self, position_x, position_y, width, height, speed, screen_width, screen_height):
@@ -22,9 +23,14 @@ class Player:
 
     def handle_input(self, keys):
         self.interacting = keys[pygame.K_SPACE]
-        dx = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * self.speed
-        dy = (keys[pygame.K_DOWN] - keys[pygame.K_UP]) * self.speed
-        return dx, dy
+        dx = keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]
+        dy = keys[pygame.K_DOWN] - keys[pygame.K_UP]
+
+        vec = np.array([dx, dy])
+        if vec.any():
+            vec = vec / np.linalg.norm(vec)
+
+        return vec[0] * self.speed, vec[1] * self.speed
 
     def move(self, dx, dy, obstacles):
         if dx == 0 and dy == 0 or self.energy <= 0:
