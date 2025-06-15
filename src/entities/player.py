@@ -92,6 +92,13 @@ class Player:
 
         print(f"Sklizeno! -{energy_cost:.1f} energie, +{exp_gain} EXP")
 
+    def get_required_energy_for_harvest(self):
+        """Vrací aktuální náklady energie na sklizeň."""
+        base_cost = 10.0
+        fitness_modifier = 0.25
+        min_cost = 4.0
+        return max(min_cost, base_cost - self.fitness * fitness_modifier)
+
     def eat(self, amount=20):
         if self.food > 0:
             self.food -= 1

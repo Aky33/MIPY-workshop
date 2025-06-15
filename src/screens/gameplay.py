@@ -67,8 +67,12 @@ class Gameplay:
         tile_pos = self.tilemap.pixel_to_tile_pos(pos)
         plant = self.tilemap.get_plant(tile_pos)
         if plant and plant.ready_to_harvest():
-            self.tilemap.harvest_plant(tile_pos)
-            print("Harvested plant")
+            if self.player.energy >= self.player.get_required_energy_for_harvest():  # nepovinně
+                self.player.harvest()
+                self.tilemap.harvest_plant(tile_pos)
+                print("Harvested plant")
+            else:
+                print("Nedostatek energie na sklizeň.")
 
     def update(self):
         keys = pygame.key.get_pressed()
