@@ -55,8 +55,9 @@ class Menu:
         self.title_text = "GARDENATOR"
 
         # Načtení obrázků
-        asset_path = os.path.join(os.path.dirname(__file__), "..", "assets")
-        bee_img_path = os.path.join(asset_path, "bee.png")
+        tiles_path = os.path.join(os.path.dirname(__file__), "..", "assets", "tiles")
+        bee_img_path = os.path.join(tiles_path, "bee.png")
+
         self.bee_img = pygame.transform.scale(
             pygame.image.load(bee_img_path).convert_alpha(), (32, 32)
         )

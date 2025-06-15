@@ -25,9 +25,10 @@ class Gameplay:
         self.player = Player(100, 100, 40, 40, 5, self.screen_width, self.screen_height)
 
         # Cesty k ikonám
-        asset_path = os.path.join(os.path.dirname(__file__), "..", "assets")
+        asset_path = os.path.join(os.path.dirname(__file__), "..", "assets", "tiles")
         pause_icon_path = os.path.join(asset_path, "pause.png")
         quit_icon_path = os.path.join(asset_path, "quit.png")
+
 
         # Načtení a úprava ikon
         self.pause_icon = pygame.transform.scale(
