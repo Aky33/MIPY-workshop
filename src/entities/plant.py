@@ -14,6 +14,10 @@ class Plant:
         
     def ready_to_harvest(self):
         return self.progress > self.growth_speed
+    
+    # To be implemented by child classes
+    def get_item(self):
+        return None
 
     def render(self, surf):
         if self.harvested: return

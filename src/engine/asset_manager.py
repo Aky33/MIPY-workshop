@@ -15,7 +15,9 @@ class AssetManager:
 
     iconset_map = {
         "wheatSeeds": 0,
-        "carrotSeeds": 1
+        "carrotSeeds": 1,
+        "wheat": 2,
+        "carrot": 3
     }
 
     grow_frame_count = 3
