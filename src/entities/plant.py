@@ -8,7 +8,7 @@ class Plant:
         self.progress = 0
         self.pos = pos
         self.harvested = False
-
+        
     def update(self):
         self.progress += self.growth_speed
         
