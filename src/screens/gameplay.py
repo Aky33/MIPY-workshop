@@ -35,6 +35,12 @@ class Gameplay:
         self.tilemap.add_plant(self.plants[0], (6, 6))
         self.tilemap.add_plant(self.plants[1], (6, 7))
 
+        # Načtení pixelové pauza ikony
+        pause_icon_path = os.path.join(os.path.dirname(__file__), "..", "assets", "tiles", "pause_icon_pixel.png")
+        self.pause_image = pygame.image.load(pause_icon_path).convert_alpha()
+        self.pause_image = pygame.transform.scale(self.pause_image, (200, 200))
+        self.pause_rect = self.pause_image.get_rect(center=(self.screen_width // 2, 40))
+
     def run(self):
         while self.running:
             self.handle_events()
@@ -59,7 +65,7 @@ class Gameplay:
         tile_pos = self.tilemap.pixel_to_tile_pos(pos)
         plant = self.tilemap.get_plant(tile_pos)
         if plant and plant.ready_to_harvest():
-            if self.player.energy >= self.player.get_required_energy_for_harvest():  # nepovinně
+            if self.player.energy >= self.player.get_required_energy_for_harvest():
                 self.player.harvest()
                 self.tilemap.harvest_plant(tile_pos)
                 print("Harvested plant")
@@ -73,7 +79,7 @@ class Gameplay:
         if self.player.interacting:
             plant_loc = (self.player.rect.centerx, self.player.rect.bottom)
             self.harvest_plant(plant_loc)
-        
+
         for plant in self.plants:
             plant.update()
 
@@ -84,11 +90,9 @@ class Gameplay:
 
         self.player.render(self.screen)
 
-        # Pauzová zpráva
+        # Pauzová zpráva jako obrázek
         if self.paused:
-            paused_msg = self.font.render("PAUZA", True, (117, 55, 19))
-            msg_rect = paused_msg.get_rect(center=(self.screen_width // 2, 40))
-            self.screen.blit(paused_msg, msg_rect)
+            self.screen.blit(self.pause_image, self.pause_rect)
 
         # Lišta
         self.rim.draw(self.screen)
