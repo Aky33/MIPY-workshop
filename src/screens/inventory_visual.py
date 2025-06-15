@@ -12,6 +12,7 @@ class InventoryVisual:
         self.pos = pos  # Top-left position of inventory
         self.cell_padding = cell_padding
         self.visible = False  # Inventory is closed by default
+        self._sell_button_rect = None  # Store sell button rect for click detection
 
     def draw_background(self, surf):
         width = self.grid_size[0] * self.cell_size + self.margin * 2
@@ -23,6 +24,7 @@ class InventoryVisual:
     def draw_grid(self, surf):
         items = self.inventory.list_items()
         cols, rows = self.grid_size
+        selected_index = None
         for i in range(cols * rows):
             x = i % cols
             y = i // cols
@@ -38,6 +40,8 @@ class InventoryVisual:
             if i < len(items) and self.inventory.selected == items[i].id:
                 pygame.draw.rect(surf, self.selected_color, cell_rect, border_radius=8)
                 pygame.draw.rect(surf, (255, 180, 40), cell_rect, width=3, border_radius=8)
+                selected_index = i
+                selected_rect = cell_rect
             else:
                 pygame.draw.rect(surf, (245, 230, 170), cell_rect, border_radius=8)
                 pygame.draw.rect(surf, self.border_color, cell_rect, width=2, border_radius=8)
@@ -58,6 +62,41 @@ class InventoryVisual:
                     surf.blit(outline, text_rect.move(1, 1))
                     surf.blit(text, text_rect)
 
+        # Draw sell button if selected item is sellable
+        self._sell_button_rect = None
+        selected_item = self.inventory.get_item(self.inventory.selected)
+        if selected_item and selected_item.price > 0 and selected_index is not None:
+            # Place the button just below the selected cell
+            font = pygame.font.SysFont("arial", 18, bold=True)
+            icon = self.inventory.money_icon
+            icon_size = 28
+            icon_surf = pygame.transform.smoothscale(icon, (icon_size, icon_size))
+            price_text = font.render(f"Sell ({selected_item.price})", True, (80, 60, 20))
+
+            # Decrease spacing between icon and text
+            spacing = 2
+            total_width = icon_size + spacing + price_text.get_width()
+            btn_width = total_width + 18  # 9px padding on each side
+            btn_height = max(icon_size, price_text.get_height()) + 12  # 6px padding top/bottom
+
+            btn_x = selected_rect.centerx - btn_width // 2
+            btn_y = selected_rect.bottom + 8
+            self._sell_button_rect = pygame.Rect(btn_x, btn_y, btn_width, btn_height)
+
+            # Draw background and border
+            pygame.draw.rect(surf, (255, 230, 120), self._sell_button_rect, border_radius=8)
+            pygame.draw.rect(surf, (180, 140, 40), self._sell_button_rect, width=2, border_radius=8)
+
+            # Center icon and text vertically
+            btn_center = self._sell_button_rect.center
+            icon_x = btn_x + 9
+            icon_y = btn_center[1] - icon_size // 2
+            text_x = icon_x + icon_size + spacing
+            text_y = btn_center[1] - price_text.get_height() // 2
+
+            surf.blit(icon_surf, (icon_x, icon_y))
+            surf.blit(price_text, (text_x, text_y))
+
     def render(self, surf):
         if self.visible:
             self.draw_background(surf)
@@ -68,6 +107,18 @@ class InventoryVisual:
             return
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_x, mouse_y = event.pos
+            # Check sell button first
+            if self._sell_button_rect and self._sell_button_rect.collidepoint(mouse_x, mouse_y):
+                selected_item = self.inventory.get_item(self.inventory.selected)
+                if selected_item and selected_item.price > 0:
+                    # Sell one item
+                    self.inventory.money += selected_item.price
+                    self.inventory.remove_item(selected_item.id, 1)
+                    # If no more, deselect
+                    if not self.inventory.get_item(selected_item.id):
+                        self.inventory.selected = None
+                return
+            # Otherwise, check grid
             cols, rows = self.grid_size
             for i in range(cols * rows):
                 x = i % cols

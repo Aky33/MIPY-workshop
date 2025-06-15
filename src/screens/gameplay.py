@@ -36,7 +36,7 @@ class Gameplay:
         self.rim = Rim(self.screen_width, self.screen_height, self.font, self.player, self.day_cycle)
         self.obstacles = [self.rim.get_rect()]
 
-        self.inventory = Inventory()
+        self.inventory = Inventory(self.assets)
         self.inventory.add_item(CarrotSeed(10))
         self.inv_int = InventoryInterface(self.inventory)
 
