@@ -6,7 +6,11 @@ class Rim:
         self.height = 80
         self.width = screen_width
         self.y = screen_height - self.height
+<<<<<<< Updated upstream
         self.font = pygame.font.SysFont("Courier New", 28)  # font Courier New
+=======
+        self.font = pygame.font.SysFont("Courier New", 20)
+>>>>>>> Stashed changes
         self.player = player
         self.day_cycle = day_cycle
 
@@ -73,11 +77,18 @@ class Rim:
         screen.blit(self.pause_icon, self.pause_button)
         screen.blit(self.quit_icon, self.quit_button)
 
+<<<<<<< Updated upstream
         # Čas v pravém horním rohu spodní lišty
         time_str = self.day_cycle.get_time_string()  # např. "08:15"
         time_surface = self.font.render(time_str, True, text_color)
         time_rect = time_surface.get_rect(topright=(self.width - 10, self.y + 10))
         screen.blit(time_surface, time_rect)
+=======
+        # Zobrazení času ve formátu HH:MM vpravo nahoře v liště
+        time_str = self.day_cycle.get_time_hhmm()
+        time_surface = self.font.render(f"Time: {time_str}", True, text_color)
+        screen.blit(time_surface, (self.width - 220, self.y + 10))  # pozice hodin
+>>>>>>> Stashed changes
 
         # Tooltipy
         mouse_pos = pygame.mouse.get_pos()

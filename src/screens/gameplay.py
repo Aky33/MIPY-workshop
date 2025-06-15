@@ -30,7 +30,11 @@ class Gameplay:
         self.tilemap = Tilemap(self.assets)
         self.player = Player(100, 100, 40, 40, 5, self.screen_width, self.screen_height)
 
+<<<<<<< Updated upstream
         # Lišta dole – nyní s předáním day_cycle
+=======
+        # Lišta dole – nyní i s day_cycle
+>>>>>>> Stashed changes
         self.rim = Rim(self.screen_width, self.screen_height, self.font, self.player, self.day_cycle)
         self.obstacles = [self.rim.get_rect()]
 
@@ -96,12 +100,17 @@ class Gameplay:
                 print("Nedostatek energie na sklizeň.")
 
     def update(self):
+<<<<<<< Updated upstream
         dt = self.clock.get_time() / 1000
+=======
+        dt = self.clock.get_time() / 1000  # delta time in seconds
+>>>>>>> Stashed changes
         self.day_cycle.update(dt)
 
         keys = pygame.key.get_pressed()
         dx, dy = self.player.handle_input(keys)
         self.player.move(dx, dy, self.obstacles)
+
         if self.player.interacting:
             plant_loc = (self.player.rect.centerx, self.player.rect.bottom)
             self.harvest_plant(plant_loc)
@@ -109,6 +118,10 @@ class Gameplay:
         for plant in self.plants:
             plant.update()
 
+<<<<<<< Updated upstream
+=======
+        # Snížení energie v noci
+>>>>>>> Stashed changes
         if self.day_cycle.time_of_day == "night":
             self.player.energy = max(0, self.player.energy - 0.05)
 
@@ -126,15 +139,30 @@ class Gameplay:
                 if obstacle not in self.house.get_obstacles():
                     pygame.draw.rect(self.screen, (128, 0, 128, 150), obstacle)
 
+<<<<<<< Updated upstream
         # Pauza
         if self.paused:
             self.screen.blit(self.pause_image, self.pause_rect)
 
         # Overlay podle denní doby
+=======
+        if self.paused:
+            self.screen.blit(self.pause_image, self.pause_rect)
+
+        # Denní doba overlay
+>>>>>>> Stashed changes
         overlay = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
         overlay.fill(self.day_cycle.get_overlay_color())
         self.screen.blit(overlay, (0, 0))
 
+<<<<<<< Updated upstream
         # Spodní lišta a inventář
+=======
+        # Volitelné – textová indikace denní doby (můžeš později smazat)
+        time_text = self.font.render(self.day_cycle.time_of_day.upper(), True, (0, 0, 0))
+        self.screen.blit(time_text, (10, 10))
+
+        # Lišta dole a inventář
+>>>>>>> Stashed changes
         self.rim.draw(self.screen)
         self.inv_int.render(self.screen)
