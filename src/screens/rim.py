@@ -6,8 +6,7 @@ class Rim:
         self.height = 80
         self.width = screen_width
         self.y = screen_height - self.height
-        self.font = font
-        self.bar_font = pygame.font.SysFont("Courier New", 18)  # Písmo pro bary
+        self.font = pygame.font.SysFont("Courier New", 20)  # Nové písmo pro všechny texty
         self.player = player
 
         # Cesta k ikonám
@@ -33,7 +32,7 @@ class Rim:
         pygame.draw.rect(screen, border_color, (x, y, width, height), 2)
 
         value_text = f"{label}: {int(value)}/{int(max_value)}"
-        text_surface = self.bar_font.render(value_text, True, text_color)
+        text_surface = self.font.render(value_text, True, text_color)
         text_rect = text_surface.get_rect(center=(x + width // 2, y + height // 2))
         screen.blit(text_surface, text_rect)
 
@@ -46,12 +45,10 @@ class Rim:
             return (220, 20, 60)
 
     def draw_tooltip(self, screen, text, button_rect):
+        # Pouze čistý text bez pozadí a bez rámečku
         tooltip = self.font.render(text, True, (0, 0, 0))
-        bg_rect = tooltip.get_rect(midbottom=(button_rect.centerx, button_rect.top - 2))
-        bg_rect.inflate_ip(6, 4)
-        pygame.draw.rect(screen, (255, 255, 200), bg_rect)
-        pygame.draw.rect(screen, (100, 100, 50), bg_rect, 1)
-        screen.blit(tooltip, tooltip.get_rect(center=bg_rect.center))
+        tooltip_rect = tooltip.get_rect(midbottom=(button_rect.centerx, button_rect.top - 4))
+        screen.blit(tooltip, tooltip_rect)
 
     def draw(self, screen):
         background_color = (220, 200, 120)
