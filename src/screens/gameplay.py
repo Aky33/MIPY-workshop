@@ -146,7 +146,7 @@ class Gameplay:
 
         keys = pygame.key.get_pressed()
         dx, dy = self.player.handle_input(keys)
-        self.player.move(dx, dy, self.obstacles)
+        self.player.is_moving = self.player.move(dx, dy, self.obstacles)
 
         if self.player.interacting:
             plant_loc = (self.player.rect.centerx, self.player.rect.bottom)
