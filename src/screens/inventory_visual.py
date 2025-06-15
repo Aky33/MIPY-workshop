@@ -13,6 +13,8 @@ class InventoryVisual:
         self.cell_padding = cell_padding
         self.visible = False  # Inventory is closed by default
         self._sell_button_rect = None  # Store sell button rect for click detection
+        self.close_icon = inventory.assets.get_icon("exit")
+        self._close_button_rect = None  # Store close button rect for click detection
 
     def draw_background(self, surf):
         width = self.grid_size[0] * self.cell_size + self.margin * 2
@@ -20,6 +22,14 @@ class InventoryVisual:
         rect = pygame.Rect(self.pos[0], self.pos[1], width, height)
         pygame.draw.rect(surf, self.bg_color, rect, border_radius=12)
         pygame.draw.rect(surf, self.border_color, rect, width=4, border_radius=12)
+
+        # Draw exit button OUTSIDE the main background, to the right, aligned with the top, with margin
+        icon_size = 32
+        top_margin = 16  # Add margin from the top
+        icon_x = self.pos[0] + width + 8  # 12px gap to the right of the background
+        icon_y = self.pos[1] + top_margin
+        self._close_button_rect = pygame.Rect(icon_x, icon_y, icon_size, icon_size)
+        surf.blit(pygame.transform.smoothscale(self.close_icon, (icon_size, icon_size)), (icon_x, icon_y))
 
     def draw_grid(self, surf):
         items = self.inventory.list_items()
@@ -107,7 +117,11 @@ class InventoryVisual:
             return
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_x, mouse_y = event.pos
-            # Check sell button first
+            # Check close button first
+            if self._close_button_rect and self._close_button_rect.collidepoint(mouse_x, mouse_y):
+                self.visible = False
+                return
+            # Check sell button
             if self._sell_button_rect and self._sell_button_rect.collidepoint(mouse_x, mouse_y):
                 selected_item = self.inventory.get_item(self.inventory.selected)
                 if selected_item and selected_item.price > 0:
